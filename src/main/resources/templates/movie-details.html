@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--    CSS     -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.animatedheadline.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>[[${pageTitle}]]</title>
+</head>
+<body>
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Overlay========== -->
+<div th:replace="index :: overlay"></div>
+<!-- ==========Overlay========== -->
+
+<!-- ==========Header-Section========== -->
+<div th:replace="index :: header"></div>
+<!-- ==========Header-Section========== -->
+
+<!-- ==========Banner-Section========== -->
+<section class="details-banner bg_img"
+         th:attr="data-background=${movie.bannerImageURl != null && !#strings.isEmpty(movie.bannerImageURl) ? movie.bannerImageURl : '/images/banner01.jpg'}">
+    <div class="container">
+        <div class="details-banner-wrapper">
+            <div class="details-banner-thumb">
+                <img th:src="${movie.movieImageURl}" alt="movie">
+                <a th:href="${movie.trailerURL}" class="video-popup">
+                    <img src="/images/movie/video-button.png" alt="movie">
+                </a>
+            </div>
+            <div class="details-banner-content offset-lg-3">
+                <h4 class="title">[[${movie.title}]]</h4>
+                <div class="tags">
+                    <a href="#0">Tiếng việt</a>
+                </div>
+                <th:block th:each="cate: ${movie.categories}">
+                    <a href="#0" class="button">[[${cate.name}]]</a>
+                </th:block>
+                <div class="social-and-duration">
+                    <div class="duration-area">
+                        <div class="item">
+                            <i class="fas fa-calendar-alt"></i><span>Ngày khởi chiếu: [[${movie.getFormattedReleaseDate()}]]</span>
+                        </div>
+                        <div class="item">
+                            <i class="far fa-clock"></i><span>[[${movie.duration}]] phút</span>
+                        </div>
+                        <div class="item">
+                            <span>[[${movie.getRated().getDescription()}]]</span>
+                        </div>
+                    </div>
+                    <ul class="social-share">
+                        <li><a href="#0"><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a href="#0"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#0"><i class="fab fa-pinterest-p"></i></a></li>
+                        <li><a href="#0"><i class="fab fa-linkedin-in"></i></a></li>
+                        <li><a href="#0"><i class="fab fa-google-plus-g"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- ==========Banner-Section========== -->
+
+<!-- ==========Book-Section========== -->
+<section class="book-section bg-one">
+    <div class="container">
+        <div class="book-wrapper offset-lg-3">
+            <div class="left-side">
+                <div class="item">
+                    <div class="item-header">
+                        <div class="thumb">
+                            <i class="fas fa-heart" style="color: #ff0000;"></i>
+                        </div>
+                        <div class="counter-area">
+                            <span class="counter-item odometer" th:attr="data-odometer-final=${movie.likePercentage}">0</span>
+                        </div>
+                    </div>
+                    <p>Yêu thích</p>
+                </div>
+                <div class="item">
+                    <div class="item-header">
+                        <div class="thumb">
+                            <i class="fas fa-chart-line" style="color: #fdff80;"></i>
+                        </div>
+                        <div class="counter-area">
+                            <span class="counter-item odometer" th:attr="data-odometer-final=${movie.revenuePercentage}">0</span>
+                        </div>
+                    </div>
+                    <p>Doanh thu</p>
+                </div>
+            </div>
+            <a th:href="'/ticket/plan?mid='+${movie.id}" class="custom-button">Mua vé</a>
+        </div>
+    </div>
+</section>
+<!-- ==========Book-Section========== -->
+
+<!-- ==========Movie-Section========== -->
+<section class="movie-details-section padding-top">
+    <div class="container">
+        <div class="row justify-content-center flex-wrap-reverse mb--50">
+            <div class="col-lg-9 mb-50">
+                <div class="movie-details">
+                    <div class="tab summery-review ">
+                        <ul class="tab-menu justify-content-center">
+                            <li class="active">Tổng quan về phim</li>
+                        </ul>
+                        <div class="tab-area">
+                            <div class="tab-item active">
+                                <div class="item">
+                                    <h6 class="sub-title">Đạo diễn</h6>
+                                    <p>[[${movie.director}]]</p>
+                                </div>
+                                <div class="item header">
+                                    <h6 class="sub-title">Diễn viên</h6>
+                                    <p>[[${movie.actors}]]</p>
+                                </div>
+                                <div class="item header">
+                                    <h6 class="sub-title">Mô tả phim</h6>
+                                    <p style="text-align: justify;">[[${movie.description}]]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Movie-Section========== -->
+
+<!-- ==========Newslater-Section========== -->
+<div th:replace="index :: footer"></div>
+<!-- ==========Newslater-Section========== -->
+
+
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

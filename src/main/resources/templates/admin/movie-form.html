@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap-reboot.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap-grid.min.css}">
+    <link rel="stylesheet" th:href="@{webjars/font-awesome/5.11.2/css/all.css} "/>
+
+    <link href="/css/magnific-popup.css" rel="stylesheet">
+    <link href="/css/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <link href="/css/select2.min.css" rel="stylesheet">
+    <link href="/css/ionicons.min.css" rel="stylesheet">
+    <link href="/css/admin.css" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>[[${pageTitle}]]</title>
+</head>
+<body>
+<!-- header -->
+<div th:replace="admin/dashboard::header"></div>
+<!-- end header -->
+
+<!-- sidebar -->
+<div th:replace="admin/dashboard::sidebar"></div>
+<!-- end sidebar -->
+
+<!-- main content -->
+<main class="main">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- main title -->
+            <div class="col-12">
+                <div class="main__title">
+                    <h2>[[${pageTitle}]]</h2>
+                </div>
+            </div>
+            <!-- end main title -->
+
+            <!-- form -->
+            <div class="col-12">
+                <form th:action="@{/movie/save}" th:method="POST" th:object="${movie}" class="form">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="row row--form">
+                        <div class="col-12 col-md-5 form__cover">
+                            <div class="row row--form">
+                                <div class="col-12 col-sm-6 col-md-12">
+                                    <div class="form__img">
+                                        <label for="form__img-upload">Upload movie image (270 x 400)</label>
+                                        <input id="form__img-upload" name="form__img-upload" type="file" accept=".png, .jpg, .jpeg">
+                                        <img id="form__img" src="#" alt=" ">
+                                    </div>
+                                    <input type="text" th:field="*{movieImageURl}" class="form__input" placeholder="Or add a link">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-7 form__content">
+                            <div class="row row--form">
+                                <div class="col-12">
+                                    <input type="text" required th:field="*{title}" class="form__input" placeholder="Title *">
+                                </div>
+
+                                <div class="col-12">
+                                    <textarea id="text" th:field="*{description}" name="text" class="form__textarea" placeholder="Description"></textarea>
+                                </div>
+
+                                <div class="col-12">
+                                    <input type="text" th:field="*{actors}" class="form__input" placeholder="Actors">
+                                </div>
+
+                                <div class="col-12">
+                                    <input type="text" th:field="*{director}" class="form__input" placeholder="Director">
+                                </div>
+
+                                <div class="col-12 col-lg-6">
+                                    <span>Release date *</span>
+                                    <input type="text" required class="form__input" id="releaseDate" autocomplete="off" placeholder="dd/MM/yyyy" th:field="*{releaseDate}"/>
+                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+
+                                <div class="col-12 col-lg-6">
+                                    <span>End date *</span>
+                                    <input type="text" required class="form__input" id="endDate" placeholder="dd/MM/yyyy" th:field="*{endDate}"/>
+                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+
+
+                                <div class="col-12 col-lg-6">
+                                    <input type="text" th:field="*{duration}" class="form__input" placeholder="Duration">
+                                </div>
+
+                                <div class="col-12 col-lg-6">
+                                    <select th:field="*{rated}" class="js-example-basic-single" id="rated">
+                                        <option value=""></option>
+                                        <th:block th:each="rated: ${listRated}">
+                                            <option th:value="${rated.name()}">[[${rated.description}]]</option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <select id="categories" name="categories" class="js-example-basic-multiple" multiple="multiple">
+                                        <th:block th:each="cate: ${listCategories}">
+                                            <option th:value="${cate.id}">[[${cate.name}]]</option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form__gallery">
+                                        <label id="gallery1" for="form__gallery-upload">Upload banner image</label>
+                                        <input data-name="#gallery1" id="form__gallery-upload" name="gallery" class="form__gallery-upload" type="file" accept=".png, .jpg, .jpeg" multiple>
+                                    </div>
+                                    <input type="text" th:field="*{bannerImageURl}" class="form__input" placeholder="Or add a link">
+                                </div>
+
+                                <div class="col-12 ">
+                                    <div class="form__video">
+                                        <label id="movie1" for="form__video-upload">Upload trailer video</label>
+                                        <input data-name="#movie1" id="form__video-upload" name="movie" class="form__video-upload" type="file" accept="video/mp4,video/x-m4v,video/*">
+                                    </div>
+                                    <input type="text" th:field="*{trailerURL}" class="form__input" placeholder="Or add a link">
+                                </div>
+
+                                <div class="col-12 col-lg-3">
+                                    <button type="submit" class="form__btn">Submit</button>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <button onclick="cancelForm()" type="button" class="form__btn">cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end form -->
+        </div>
+    </div>
+</main>
+<!-- end main content -->
+
+<script>
+    function cancelForm(){
+        window.location="/dashboard/management-movie";
+    }
+</script>
+
+<!-- JS -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
+<script src="/js/magnific-popup.min.js"></script>
+<script src="/js/jquery.mousewheel.min.js"></script>
+<script src="/js/jquery.mCustomScrollbar.min.js"></script>
+<script src="/js/select2.min.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

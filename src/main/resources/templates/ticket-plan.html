@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--    CSS     -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.animatedheadline.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>[[${movie.title}]]</title>
+</head>
+<body>
+
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Overlay========== -->
+<div th:replace="index :: overlay"></div>
+<!-- ==========Overlay========== -->
+
+<!-- ==========Header-Section========== -->
+<div th:replace="index :: header"></div>
+<!-- ==========Header-Section========== -->
+
+<!-- ==========Banner-Section========== -->
+<section class="details-banner hero-area bg_img"
+    th:attr="data-background=${movie.bannerImageURl != null && !#strings.isEmpty(movie.bannerImageURl) ? movie.bannerImageURl : '/images/banner01.jpg'}">
+    <div class="container">
+        <div class="details-banner-wrapper">
+            <div class="details-banner-content">
+                <h3 class="title">[[${movie.title}]]</h3>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Banner-Section========== -->
+
+<!-- ==========Window-Warning-Section========== -->
+<section class="window-warning inActive">
+    <div class="lay"></div>
+    <div class="warning-item">
+        <h6 class="subtitle">Xin chào!</h6>
+        <h4 class="title">Hãy chọn ghế ngồi</h4>
+        <div class="thumb">
+            <img src="/images/seat/seat-plan.png" alt="movie">
+        </div>
+        <a href="#" class="custom-button seatPlanButton">Chọn ghế<i class="fas fa-angle-right"></i></a>
+    </div>
+</section>
+<!-- ==========Window-Warning-Section========== -->
+
+<!-- ==========Book-Section========== -->
+<section class="book-section bg-one">
+    <div class="container">
+        <form class="ticket-search-form two" id="searchScheduleForm" th:object="${searchSchedule}">
+            <input type="hidden" id="movieId" name="movieId" th:value="${movie.id}" />
+            <div class="form-group">
+                <div class="thumb">
+                    <img src="/images/ticket/city.png" alt="ticket">
+                </div>
+                <span class="type">Tỉnh/ Thành phố</span>
+                <select id="city" name="city" onchange="loadData()" class="select-bar">
+                    <option value="">All</option>
+                    <option value="Hà Nội">Hà Nội</option>
+                    <option value="Hồ Chí Minh">TP Hồ Chí Minh</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="thumb">
+                    <img src="/images/ticket/cinema.png" alt="ticket">
+                </div>
+                <span class="type">cinema</span>
+                <select id="branch" name="branchId" onchange="loadData()" class="select-bar">
+                    <option value="">All</option>
+                    <th:block  id="branch" th:each="branch: ${listBranch}">
+                        <option th:value="${branch.id}">[[${branch.name}]]</option>
+                    </th:block>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="thumb">
+                    <img src="/images/ticket/date.png" alt="ticket">
+                </div>
+                <span class="type">date</span>
+                <select name="date" onchange="loadData()" class="select-bar">
+                    <th:block th:each="date: ${dates}">
+                        <option th:value="${date}">[[${date}]]</option>
+                    </th:block>
+                </select>
+            </div>
+
+        </form>
+    </div>
+</section>
+<!-- ==========Book-Section========== -->
+
+<!-- ==========Movie-Section========== -->
+<div class="ticket-plan-section padding-bottom padding-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 mb-5 mb-lg-0">
+                <ul id="result" class="seat-plan-wrapper bg-five">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==========Movie-Section========== -->
+
+<!-- ==========Newslater-Section========== -->
+<div th:replace="index :: footer"></div>
+<!-- ==========Newslater-Section========== -->
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/toJSON.js}"></script>
+
+
+<script th:inline="javascript">
+    function loadData() {
+        var form = $("#searchScheduleForm");
+        var formData = form.serializeArray();
+
+        // Lấy giá trị movieId từ trường ẩn
+        var movieId = $("#movieId").val();
+        // Thêm movieId vào formData
+        formData.push({ name: "movieId", value: movieId });
+
+        var jsonData = serializeArrayToJSON(formData);
+        var jsonString = JSON.stringify(jsonData);
+
+        console.log("request: "+jsonString)
+        $.ajax({
+            type: "POST",
+            url: "/schedule/loadData",
+            data: jsonString,
+            contentType: "application/json",
+            success: function (data) {
+                // Xử lý dữ liệu đã tải và hiển thị trong div với id "result"
+                console.log("response: "+data);
+                displayListBranch(JSON.parse(data))
+                displayListSchedule(JSON.parse(data));
+            },
+            error: function () {
+                alert("Có lỗi xảy ra trong quá trình tải dữ liệu!");
+            }
+        });
+    }
+
+    function displayListBranch(list) {
+        // Hiển thị danh sách trên client
+        var selectBranch = document.getElementById("branch");
+        var ulList = selectBranch.nextElementSibling.querySelector('ul.list');
+
+        // Tạo đoạn mã HTML sẵn cho mỗi phần tử trong danh sách
+        var html1 = "";
+        var html2 = "";
+        html1 += '<option value="">All</option>';
+        html2 += '<li data-value="" class="option selected focus">All</li>';
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].listSchedule.length!=0){
+                html1 += '<option value="' + list[i].branchName + '">' + list[i].branchName + '</option>';
+                html2 += '<li data-value="'+ list[i].branchId + '" class="option">' + list[i].branchName+ '</li>';
+            }
+        }
+        // Gán đoạn mã HTML vào container
+        selectBranch.innerHTML = html1;
+        ulList.innerHTML = html2;
+    }
+
+
+    function displayListSchedule(list) {
+        // Hiển thị danh sách trên client
+        var selectSchedule = document.getElementById("result");
+        var html1 = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (item.listSchedule.length!=0){
+                    html1 += '<li class="active">' +
+                        '<div class="movie-name">' +
+                        '<div class="icons">' +
+                        '<i class="far fa-heart"></i>' +
+                        '<i class="fas fa-heart"></i>' +
+                        '</div>' +
+                        '<a href="/branch/details?bid='+ item.branchId +'" class="name">' + item.branchName + '</a>' +
+                        '<div class="location-icon">' +
+                        '<i class="fas fa-map-marker-alt"></i>' +
+                        '</div>' +
+                        '</div>'+
+                        '<div class="movie-schedule">';
+                    for (var j=0; j<item.listSchedule.length; j++) {
+                        var schedule = item.listSchedule[j];
+                        html1 += '<div class="item" onclick="showWarning('+schedule.scheduleId+')">'+schedule.startTime+'</div>';
+                    }
+                    html1+='</div>'+
+                        '</li>';
+                }
+        }
+        // Gán đoạn mã HTML vào container
+        selectSchedule.innerHTML = html1;
+
+    }
+
+    function showWarning(id){
+        var element = document.querySelector(".window-warning");
+        var seatPlanButton = document.querySelector(".seatPlanButton");
+        element.classList.remove("inActive");
+        seatPlanButton.href = "/seat/plan?sid="+id;
+    }
+
+    $(document).ready(function () {
+        // Tải dữ liệu ban đầu khi trang được tải
+        loadData();
+    });
+</script>
+</body>
+</html>

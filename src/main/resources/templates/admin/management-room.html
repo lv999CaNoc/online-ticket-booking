@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap-reboot.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap-grid.min.css}">
+    <link href="/css/magnific-popup.css" rel="stylesheet">
+    <link href="/css/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <link href="/css/select2.min.css" rel="stylesheet">
+    <link href="/css/ionicons.min.css" rel="stylesheet">
+    <link href="/css/admin.css" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>[[${pageTitle}]]</title>
+</head>
+<body>
+<!-- header -->
+<div th:replace="admin/dashboard::header"></div>
+<!-- end header -->
+
+<!-- sidebar -->
+<div th:replace="admin/dashboard::sidebar"></div>
+<!-- end sidebar -->
+
+
+<!--main content-->
+<main class="main">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- main title -->
+            <div class="col-12">
+                <div class="main__title">
+                    <h2>[[${pageTitle}]]</h2>
+
+                    <span class="main__title-stat">[[${rooms.size()}]] Phòng</span>
+                    <a class="main__title-link" style="margin-left: auto;" href="/room/new">Thêm phòng</a>
+                    <div class="main__title-wrap">
+                        <!-- filter sort -->
+                        <div class="filter" id="filter__sort">
+                            <span class="filter__item-label">Sort by:</span>
+
+                            <div class="filter__item-btn dropdown-toggle" role="navigation" id="filter-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <input type="button" value="ROOM ID">
+                                <span></span>
+                            </div>
+
+                            <ul class="filter__item-menu dropdown-menu scrollbar-dropdown" aria-labelledby="filter-sort">
+                                <li>ROOM ID</li>
+                                <li>BRANCH ID</li>
+                            </ul>
+                        </div>
+                        <!-- end filter sort -->
+
+                        <!-- search -->
+                        <form th:action="@{/room/search}" method="get" class="main__title-form">
+                            <input name="search" type="text" placeholder="Tìm theo tên phòng...">
+                            <button type="submit">
+                                <i class="icon ion-ios-search"></i>
+                            </button>
+                        </form>
+                        <!-- end search -->
+                    </div>
+                </div>
+            </div>
+            <!-- end main title -->
+
+            <!--message-->
+            <div class="col-12">
+                <div class="main__table-message">
+                    <div th:if="${successMessage}" class="text-center alert alert-success">[[${successMessage}]]</div>
+                    <div th:if="${errorMessage}" class="text-center alert alert-danger">[[${errorMessage}]]</div>
+                </div>
+            </div>
+            <!--message-->
+
+            <!-- dashbox -->
+            <div class="col-12">
+                <div class="main__table-wrap">
+                    <table class="main__table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>BRANCH NAME</th>
+                            <th>ROOM NAME</th>
+                            <th>capacity</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <th:block th:each="room: ${rooms}">
+                            <tr>
+                                <td>
+                                    <div class="main__table-text">[[${room.id}]]</div>
+                                </td>
+                                <td>
+                                    <div class="main__table-text"><a href="#">[[${room.getBranch().getName()}]]</a></div>
+                                </td>
+                                <td>
+                                    <div class="main__table-text">[[${room.name}]]</div>
+                                </td>
+                                <td>
+                                    <div class="main__table-text">[[${room.capacity}]]</div>
+                                </td>
+                                <td>
+                                    <div class="main__table-btns">
+                                        <a th:href="'/room/edit?id='+${room.id}" class="main__table-btn main__table-btn--edit">
+                                            <i class="icon ion-ios-create"></i>
+                                        </a>
+                                        <a href="#" th:onclick="'confirmDelete('+${room.id}+')'" class="main__table-btn main__table-btn--delete open-modal" >
+                                            <i class="icon ion-ios-trash" style="color: #c71111"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- end dashbox -->
+
+            <!-- paginator -->
+            <div class="col-12">
+                <div class="paginator-wrap">
+                    <span>[[${rooms.size()}]] from 10</span>
+
+                    <ul class="paginator">
+                        <li class="paginator__item paginator__item--prev">
+                            <a href="#"><i class="icon ion-ios-arrow-back"></i></a>
+                        </li>
+                        <li class="paginator__item paginator__item--active"><a href="#">1</a></li>
+                        <li class="paginator__item "><a href="#">2</a></li>
+                        <li class="paginator__item"><a href="#">3</a></li>
+                        <li class="paginator__item"><a href="#">4</a></li>
+                        <li class="paginator__item paginator__item--next">
+                            <a href="#"><i class="icon ion-ios-arrow-forward"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- end paginator -->
+        </div>
+    </div>
+</main>
+<!-- end main content -->
+
+<script>
+        function confirmDelete(id){
+        if (confirm("BẠN CHẮC CHẮN MUỐN XÓA PHÒNG CÓ ID = "+id+"?")){
+            window.location="/room/delete?id="+id;
+        }
+    }
+</script>
+
+
+<!-- JS -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+<script src="/js/magnific-popup.min.js"></script>
+<script src="/js/jquery.mousewheel.min.js"></script>
+<script src="/js/jquery.mCustomScrollbar.min.js"></script>
+<script src="/js/select2.min.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

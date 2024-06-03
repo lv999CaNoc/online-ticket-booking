@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!--    CSS     -->
+  <!--    CSS     -->
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.animatedheadline.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+  <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+  <title>Danh sách phim</title>
+</head>
+<body>
+
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Overlay========== -->
+<div th:replace="index :: overlay"></div>
+<!-- ==========Overlay========== -->
+
+<!-- ==========Header-Section========== -->
+<div th:replace="index :: header"></div>
+<!-- ==========Header-Section========== -->
+
+<!-- ==========Banner-Section========== -->
+<section class="banner-section">
+  <div class="banner-bg bg_img bg-fixed" data-background="/images/banner02.jpg"></div>
+  <div class="container">
+    <div class="banner-content">
+      <h1 class="title bold">get <span class="color-theme">movie</span> tickets</h1>
+      <p>Mua vé xem phim trực tuyến, tìm phim theo thời gian chiếu và nhiều tính năng hơn thế nữa...</p>
+    </div>
+  </div>
+</section>
+<!-- ==========Banner-Section========== -->
+
+<!-- ==========Ticket-Search========== -->
+<section class="search-ticket-section padding-top pt-lg-0">
+  <div class="container">
+    <div class="search-tab bg_img" data-background="assets/images/ticket/ticket-bg01.jpg">
+      <div class="row align-items-center mb--20">
+        <div class="col-lg-6 mb-20">
+          <div class="search-ticket-header">
+            <h6 class="category">welcome to ACTVN </h6>
+            <h4 class="title">what are you looking for</h4>
+          </div>
+        </div>
+      </div>
+      <div class="tab-area">
+        <div class="tab-item active">
+          <form class="ticket-search-form" th:action="@{/movie/search-advantage}" method="get">
+            <div class="form-group large">
+              <input name="search" type="text" placeholder="Tìm kiếm phim theo tên phim, đạo diễn, diễn viên...">
+              <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ==========Ticket-Search========== -->
+
+<!-- ==========Movie-Section========== -->
+<section id="content-section" class="movie-section  padding-top padding-bottom">
+  <div class="container">
+    <div class="row flex-wrap-reverse justify-content-center">
+      <div class="col-sm-10 col-md-8 col-lg-3">
+        <div class="widget-1 widget-check">
+          <div class="widget-header">
+            <h5 class="m-title">Bộ lọc</h5>
+            <a href="#content-section" onclick="filter()" class="apply-check">Apply</a>
+            <a href="/movie/list" class="clear-check">Clear</a>
+          </div>
+          <div class="widget-1-body">
+            <h6 class="subtitle">Độ tuổi</h6>
+            <div class="check-area">
+              <th:block th:each="rate: ${listRated}">
+                <div class="form-group">
+                  <input type="checkbox" name="rate" th:id="${rate.name()}">
+                  <label th:for="${rate.name()}">[[${rate.description}]]</label>
+                </div>
+              </th:block>
+            </div>
+          </div>
+        </div>
+        <div class="widget-1 widget-check">
+          <div class="widget-1-body">
+            <h6 class="subtitle">Thể loại</h6>
+            <div class="check-area">
+              <th:block th:each="cate: ${listCategories}">
+                <div class="form-group">
+                  <input type="checkbox" name="cate" th:id="${cate.id}">
+                  <label th:for="${cate.id}">[[${cate.name}]]</label>
+                </div>
+              </th:block>
+            </div>
+            <div class="add-check-area">
+              <a href="#0">xem thêm<i class="plus"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-9 mb-50 mb-lg-0">
+        <div class="filter-tab tab">
+          <div class="filter-area">
+            <div class="filter-main">
+              <div class="left">
+                <div class="item">
+                  <span class="show">Hiển thị:</span>
+                  <select class="select-bar" id="status">
+                    <option value="showing">Phim đang chiếu</option>
+                    <option value="comming-soon">Phim sắp chiếu</option>
+                    <option value="most-love">Được yêu thích</option>
+                  </select>
+                </div>
+              </div>
+              <ul class="grid-button tab-menu">
+                <li>
+                  <i class="fas fa-th"></i>
+                </li>
+                <li class="active">
+                  <i class="fas fa-bars"></i>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="tab-area">
+            <div class="tab-item">
+              <div id="movie-conten-grid" class="row mb-10 justify-content-center">
+                <th:block  th:each="movie: ${movies}">
+                  <div class="col-sm-6 col-lg-4">
+                    <div class="movie-grid">
+                      <div class="movie-thumb c-thumb">
+                        <a th:href="@{'/movie/details?mid='+${movie.id}}">
+                          <img th:src="${movie.movieImageURl}" alt="movie">
+                        </a>
+                      </div>
+                      <div class="movie-content bg-one">
+                        <h6 class="title m-0">
+                          <a th:href="@{'/movie/details?mid='+${movie.id}}">[[${movie.title}]]</a>
+                        </h6>
+                        <ul class="movie-rating-percent">
+                          <li>
+                            <div class="thumb">
+                              <i class="fas fa-heart" style="color: #ff0000;"></i>
+                            </div>
+                            <span class="content">[[${movie.likePercentage}]]%</span>
+                          </li>
+                          <li>
+                            <div class="thumb">
+                              <i class="fas fa-chart-line" style="color: #fdff80;"></i>
+                            </div>
+                            <span class="content">[[${movie.revenuePercentage}]]%</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </th:block>
+              </div>
+            </div>
+            <div class="tab-item active">
+              <div class="movie-area mb-10">
+                <div id="content-movie-list">
+                  <th:block th:each="movie: ${movies}">
+                    <div class="movie-list">
+                      <div class="movie-thumb c-thumb">
+                        <a th:href="@{'/movie/details?mid='+${movie.id}}">
+                          <img th:src="${movie.movieImageURl}" alt="movie">
+                        </a>
+                      </div>
+                      <div class="movie-content bg-one">
+                        <h5 class="title">
+                          <a th:href="@{'/movie/details?mid='+${movie.id}}">[[${movie.title}]]</a>
+                        </h5>
+                        <p class="duration">[[${movie.duration}]] phút</p>
+                        <div class="movie-tags">
+                          <th:block th:each="cate: ${movie.categories}">
+                            <a href="#0">[[${cate.name}]]</a>
+                          </th:block>
+                        </div>
+                        <div class="rated">
+                          <a>[[${movie.rated.description}]]</a>
+                        </div>
+                        <div class="release">
+                          <span>Ngày khởi chiếu: </span><a href="#0">[[${movie.getFormattedReleaseDate()}]]</a>
+                        </div>
+
+                        <ul class="movie-rating-percent">
+                          <li>
+                            <div class="thumb">
+                              <i class="fas fa-heart" style="color: #ff0000;"></i>
+                            </div>
+                            <span class="content">[[${movie.likePercentage}]]%</span>
+                          </li>
+                          <li>
+                            <div class="thumb">
+                              <i class="fas fa-chart-line" style="color: #fdff80;"></i>
+                            </div>
+                            <span class="content">[[${movie.revenuePercentage}]]%</span>
+                          </li>
+                        </ul>
+                        <div class="book-area">
+                          <div class="book-ticket">
+                            <div class="react-item">
+                              <a href="#0">
+                                <div class="thumb">
+                                  <img src="/images/icons/heart.png" alt="icons">
+                                </div>
+                              </a>
+                            </div>
+                            <div class="react-item mr-auto">
+                              <a th:href="'/ticket/plan?mid='+${movie.id}">
+                                <div class="thumb">
+                                  <img src="/images/icons/book.png" alt="icons">
+                                </div>
+                                <span>Đặt vé</span>
+                              </a>
+                            </div>
+                            <div class="react-item">
+                              <a th:href="${movie.trailerURL}" class="popup-video">
+                                <div class="thumb">
+                                  <img src="/images/icons/play-button.png" alt="icons">
+                                </div>
+                                <span>Xem trailer</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </th:block>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pagination-area text-center">
+            <a href="#0" ><i class="fas fa-angle-double-left"></i><span>Prev</span></a>
+            <a href="#0" class="active">1</a>
+            <a href="#0"><span>Next</span><i class="fas fa-angle-double-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ==========Movie-Section========== -->
+
+<!-- ==========Newslater-Section========== -->
+<div th:replace="index :: footer"></div>
+<!-- ==========Newslater-Section========== -->
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/heandline.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/ajax.js}"></script>
+
+<script th:inline="javascript">
+  function filter(){
+    var selectedRateOptions = $('input[name="rate"]:checked');
+    var selectedCateOptions = $('input[name="cate"]:checked');
+    var selectStatus = document.getElementById("status");
+
+    var selectedRateValues = [];
+    var selectedCateValues =[];
+    var selectedStatusValue = selectStatus.value;
+
+    selectedRateOptions.each(function() {
+      selectedRateValues.push($(this).attr('id'));
+    });
+    selectedCateOptions.each(function() {
+      selectedCateValues.push($(this).attr('id'));
+    });
+
+    var jsonData = {
+      "rates": selectedRateValues,
+      "categories": selectedCateValues,
+      "status": selectedStatusValue
+    };
+
+    console.log(JSON.stringify(jsonData));
+
+    $.ajax({
+      type: "POST",
+      url: "/movie/filter-movie",
+      data: JSON.stringify(jsonData),
+      contentType: "application/json",
+      success: function(response) {
+        displayListMovie(JSON.parse(response));
+      },
+      error: function(xhr, status, error) {
+        console.error(xhr.responseText);
+      }
+    });
+  }
+
+  function displayListMovie(list) {
+    console.log(list)
+    // Hiển thị danh sách trên client
+    var contentMovieList = document.getElementById("content-movie-list");
+    // var contentMovieGrid = document.getElementById("content-movie-grid");
+
+
+    // Tạo đoạn mã HTML sẵn cho mỗi phần tử trong danh sách
+    var htmlList = "";
+    // var htmlGrid = "";
+    for (var i = 0; i < list.length; i++) {
+      var movie = list[i];
+      htmlList+='<div class="movie-list">' +
+              '<div class="movie-thumb c-thumb">' +
+              '<a href="/movie/details?mid=' + movie.id + '">' +
+              '<img src="' + movie.movieImageURl + '" alt="movie">' +
+              '</a>' +
+              '</div>' +
+              '<div class="movie-content bg-one">' +
+              '<h5 class="title">' +
+              '<a href="/movie/details?mid=' + movie.id + '">' + movie.title + '</a>' +
+              '</h5>' +
+              '<p class="duration">' + movie.duration + ' phút</p>' +
+              '<div class="movie-tags">';
+
+      // Thêm các tags cho movie
+      for (var j = 0; j < movie.categories.length; j++) {
+        var category = movie.categories[j];
+        htmlList += '<a href="#0">' + category.name + '</a>';
+      }
+
+      htmlList += '</div>' +
+              '<div class="rated">' +
+              '<a>' + movie.ratedDescription + '</a>' +
+              '</div>' +
+              '<div class="release">' +
+              '<span>Ngày khởi chiếu: </span><a href="#0">' + movie.formattedReleaseDate + '</a>' +
+              '</div>' +
+              '<ul class="movie-rating-percent">' +
+              '<li>' +
+              '<div class="thumb">' +
+              '<i class="fas fa-heart" style="color: #ff0000;"></i>' +
+              '</div>' +
+              '<span class="content">' + movie.likePercentage + '%</span>' +
+              '</li>' +
+              '<li>' +
+              '<div class="thumb">' +
+              '<i class="fas fa-chart-line" style="color: #fdff80;"></i>' +
+              '</div>' +
+              '<span class="content">' + movie.revenuePercentage + '%</span>' +
+              '</li>' +
+              '</ul>' +
+              '<div class="book-area">' +
+              '<div class="book-ticket">' +
+              '<div class="react-item">' +
+              '<a href="#0">' +
+              '<div class="thumb">' +
+              '<img src="/images/icons/heart.png" alt="icons">' +
+              '</div>' +
+              '</a>' +
+              '</div>' +
+              '<div class="react-item mr-auto">' +
+              '<a href="/ticket/plan?mid=' + movie.id + '">' +
+              '<div class="thumb">' +
+              '<img src="/images/icons/book.png" alt="icons">' +
+              '</div>' +
+              '<span>Đặt vé</span>' +
+              '</a>' +
+              '</div>' +
+              '<div class="react-item">' +
+              '<a href="' + movie.trailerUrl + '" class="popup-video">' +
+              '<div class="thumb">' +
+              '<img src="/images/icons/play-button.png" alt="icons">' +
+              '</div>' +
+              '<span>Xem trailer</span>' +
+              '</a>' +
+              '</div>' +
+              '</div>' +
+              '</div>' +
+              '</div>' +
+              '</div>';
+
+    }
+    // Gán đoạn mã HTML vào container
+    contentMovieList.innerHTML = htmlList;
+    // contentMovieGrid.innerHTML = htmlGrid;
+  }
+</script>
+
+</body>
+</html>

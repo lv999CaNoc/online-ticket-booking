@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap-reboot.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap-grid.min.css}">
+    <link rel="stylesheet" th:href="@{webjars/font-awesome/5.11.2/css/all.css} "/>
+
+    <link href="/css/magnific-popup.css" rel="stylesheet">
+    <link href="/css/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <link href="/css/select2.min.css" rel="stylesheet">
+    <link href="/css/ionicons.min.css" rel="stylesheet">
+    <link href="/css/admin.css" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>[[${pageTitle}]]</title>
+</head>
+<body>
+<!-- header -->
+<div th:replace="admin/dashboard::header"></div>
+<!-- end header -->
+
+<!-- sidebar -->
+<div th:replace="admin/dashboard::sidebar"></div>
+<!-- end sidebar -->
+
+<!-- main content -->
+<main class="main">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- main title -->
+            <div class="col-12">
+                <div class="main__title">
+                    <h2>[[${pageTitle}]]</h2>
+                </div>
+            </div>
+            <!-- end main title -->
+
+            <!-- form -->
+            <div class="col-12">
+                <form th:action="@{/manager/save}" th:method="POST" th:object="${manager}" class="form">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="row row--form">
+
+                        <div class="col-12">
+                            <div class="row row--form">
+                                <div class="col-12">
+                                    <h5>Thông tin người quản lý:</h5>
+                                    <input type="hidden" th:field="*{user.id}">
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <span>First Name:</span>
+                                    <input type="text" th:field="*{user.firstName}" class="form__input" placeholder="First name">
+
+                                    <span>Username *:</span>
+                                    <input type="text" required th:field="*{user.username}" class="form__input" placeholder="Username *">
+
+                                    <span>Password *:</span>
+                                    <input type="password" required th:field="*{user.password}" class="form__input" placeholder="Password *">
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <span>Last name:</span>
+                                    <input type="text" th:field="*{user.lastName}" class="form__input" placeholder="Last name">
+
+                                    <span>Email *:</span>
+                                    <input type="email" required th:field="*{user.email}" class="form__input" placeholder="Email *">
+
+                                    <span>Phone number *:</span>
+                                    <input type="text" required th:field="*{user.phoneNumber}" class="form__input" placeholder="Phone number *">
+                                </div>
+
+                                <div class="col-12">
+                                    <h5>Thông tin rạp:</h5>
+                                    <select th:field="*{branch}" class="js-example-basic-single" id="branch">
+                                        <option value=""></option>
+                                        <th:block th:each="b: ${listBranch}">
+                                            <option th:value="${b.id}">[[${b.name}]] - [[${b.diaChi}]]</option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-lg-3">
+                                    <button type="submit" class="form__btn">Submit</button>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <button onclick="cancelForm()" type="button" class="form__btn">cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end form -->
+        </div>
+    </div>
+</main>
+<!-- end main content -->
+
+<script>
+    function cancelForm(){
+        window.location="/dashboard/management-manager";
+    }
+</script>
+
+<!-- JS -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
+<script src="/js/magnific-popup.min.js"></script>
+<script src="/js/jquery.mousewheel.min.js"></script>
+<script src="/js/jquery.mCustomScrollbar.min.js"></script>
+<script src="/js/select2.min.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

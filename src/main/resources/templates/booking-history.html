@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--    CSS     -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.animatedheadline.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>[[${pageTitle}]]</title>
+</head>
+<body>
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Overlay========== -->
+<div th:replace="index :: overlay"></div>
+<!-- ==========Overlay========== -->
+
+<!-- ==========Header-Section========== -->
+<div th:replace="index :: header"></div>
+<!-- ==========Header-Section========== -->
+
+<!-- ==========Banner-Section========== -->
+<section class="banner-section">
+    <div class="banner-bg bg_img bg-fixed" data-background="/images/banner.jpg"></div>
+    <div class="container">
+        <div class="speaker-banner-content">
+            <h2 class="title" th:text="${pageTitle}"></h2>
+        </div>
+    </div>
+</section>
+<!-- ==========Banner-Section========== -->
+
+
+<!-- ==========Blog-Section========== -->
+<section class="blog-section padding-top padding-bottom">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 mb-50 mb-lg-0">
+                <article>
+                    <th:block th:each="ticket: ${tickets}">
+                        <div class="post-item d-flex">
+                            <div class="post-content col-lg-8">
+                                <div class="post-header">
+                                    <h4 class="title">
+                                        <a th:href="'/movie/details?mid='+${ticket.getSchedule().getMovie().getId()}" th:text="${ticket.getSchedule().getMovie().getTitle()}"></a>
+                                    </h4>
+                                    <div class="meta-post">
+                                        <a href="#0" class="mr-4">
+                                            <i class="flaticon-conversation"></i>
+                                            <span th:text="${ticket.getSchedule().getRoom().getBranch().getName()}"></span>
+                                        </a>
+                                        <a href="#0" class="mr-4"><i class="flaticon-conversation"></i>
+                                            <span th:text="${ticket.getSchedule().getRoom().getBranch().getDiaChi()}"></span>
+                                        </a>
+                                    </div>
+                                    <div class="meta-post">
+                                        <a href="#0" class="mr-4">
+                                            <i class="flaticon-conversation"></i>
+                                            <span th:text="${ticket.getSeat().getRoom().getName()}"></span>
+                                        </a>
+                                        <a href="#0" class="mr-4">
+                                            <i class="flaticon-conversation"></i>
+                                            <span th:text="${ticket.getSeat().getName()}"></span>
+                                        </a>
+
+                                        <a href="#0" class="mr-4"><i class="flaticon-view"></i>
+                                            <span>Bắt đầu: [[${#dates.format(ticket.getSchedule().getStartDate(),'HH:mm dd/MM/yyyy')}]]</span>
+                                        </a>
+                                    </div>
+                                    <div class="meta-post">
+                                        <a href="#0" class="mr-4"><i class="flaticon-conversation"></i>
+                                            <span>Giá vé: [[${ticket.getSchedule().getPrice()}/1000]],000vnd</span>
+                                        </a>
+                                        <a href="#0"><i class="flaticon-view"></i>
+                                            Ngày đặt:
+                                            <span th:text="${ticket.getBill().getFormattedCreatedTime()}"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="entry-content">
+                                    <div class="left">
+                                        <div class="authors">
+                                            <h6 class="title"><a href="#0">
+                                                <span style="color: white">Trạng thái vé:</span>
+                                                <span th:if="${ticket.getBill().getStatus()=='COMPLETE'}">Thành công</span>
+                                                <span th:if="${ticket.getBill().getStatus()=='PENDING'}" style="color:orange">Chờ thanh toán</span>
+                                                <span th:if="${ticket.getBill().getStatus()=='CANCEL'}" class="text-danger">Bị hủy</span>
+                                            </a></h6>
+                                        </div>
+                                    </div>
+                                    <a th:href="'/payment/checkout?bid='+${ticket.getBill().getId()}" class="buttons custom-button" th:if="${ticket.getBill().getStatus()=='PENDING'}">
+                                        Thanh toán
+                                        <i class="flaticon-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="post-thumb col-lg-4" style="display: flex; align-items: center;">
+                                <img th:src="${ticket.getQrImageURL()}" alt="QRcode">
+                            </div>
+                        </div>
+                    </th:block>
+                </article>
+                <div class="pagination-area text-center">
+                    <a href="#0" ><i class="fas fa-angle-double-left"></i><span>Prev</span></a>
+                    <a href="#0"  class="active">1</a>
+                    <a href="#0">2</a>
+                    <a href="#0">3</a>
+                    <a href="#0">4</a>
+                    <a href="#0">5</a>
+                    <a href="#0"><span>Next</span><i class="fas fa-angle-double-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-10 col-md-8">
+                <aside>
+                    <div class="widget widget-search">
+                        <h5 class="title">Tìm kiếm</h5>
+                        <form class="search-form">
+                            <input type="text" placeholder="Nhập từ khóa" required="">
+                            <button type="submit"><i class="flaticon-loupe"></i>Tìm</button>
+                        </form>
+                    </div>
+
+                    <div class="widget widget-follow">
+                        <h5 class="title">Follow Us</h5>
+                        <ul class="social-icons">
+                            <li>
+                                <a href="#0" class="">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#0" class="">
+                                    <i class="fab fa-pinterest-p"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#0">
+                                    <i class="fab fa-google"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#0">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Blog-Section========== -->
+
+
+<!-- ==========Newslater-Section========== -->
+<div th:replace="index :: footer"></div>
+<!-- ==========Newslater-Section========== -->
+
+
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

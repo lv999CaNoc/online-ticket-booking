@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--    CSS     -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.animatedheadline.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>Movie ticket plan</title>
+</head>
+<body>
+
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Overlay========== -->
+<div th:replace="index :: overlay"></div>
+<!-- ==========Overlay========== -->
+
+<!-- ==========Header-Section========== -->
+<div th:replace="index :: header"></div>
+<!-- ==========Header-Section========== -->
+
+<!-- ==========Banner-Section========== -->
+<section th:fragment="banner" class="details-banner hero-area bg_img seat-plan-banner"
+         th:attr="data-background=${movie.bannerImageURl != null && !#strings.isEmpty(movie.bannerImageURl) ? movie.bannerImageURl : '/images/banner01.jpg'}">
+    <div class="container">
+        <div class="details-banner-wrapper">
+            <div class="details-banner-content style-two">
+                <h3 class="title" th:text="${movie.title}"></h3>
+                <div class="tags">
+                    <a href="#" th:text="${room.getBranch().getName()}"></a>
+                    <a href="#" th:text="${room.getName()}"></a>
+                    <a href="#" th:text="${#dates.format(schedule.getStartDate(), 'HH:mm dd/MM/yyyy')}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Banner-Section========== -->
+
+<!-- ==========Window-Warning-Section========== -->
+<section class="window-warning inActive">
+    <div class="lay"></div>
+    <div class="warning-item">
+        <h6 class="subtitle"></h6>
+        <h4 class="title"></h4>
+        <a href="#screen-thumb" class="custom-button bookButton" onclick="closeWarning()"><i class="fas fa-angle-right"></i></a>
+    </div>
+</section>
+<!-- ==========Window-Warning-Section========== -->
+
+
+<!-- ==========Page-Title========== -->
+<section class="page-title bg-one">
+    <div class="container">
+        <div class="page-title-area">
+            <div class="item md-order-1">
+                <a th:href="'/ticket/plan?mid='+${schedule.getMovie().getId()}" class="custom-button back-button">
+                    <i class="flaticon-double-right-arrows-angles"></i>Back
+                </a>
+            </div>
+            <div class="item">
+                <p>Còn lại</p>
+                <h5 class="title" id="countdown"></h5>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Page-Title========== -->
+
+<!-- ==========Movie-Section========== -->
+<div class="seat-plan-section padding-bottom padding-top">
+    <div class="container">
+        <div class="seat-information">
+            <ul class="d-flex">
+                <li class="single-seat col-lg-4">
+                    <img src="/images/seat/seat01.png" alt="seat">
+                    <span class="seat-info">Ghế đã được đặt</span>
+                </li>
+                <li class="single-seat col-lg-4">
+                    <img src="/images/seat/seat01-processed.png" alt="seat">
+                    <span class="seat-info">Ghế đang được đặt</span>
+                </li>
+                <li class="single-seat col-lg-4">
+                    <img src="/images/seat/seat01-free.png" alt="seat">
+                    <span class="seat-info">Ghế trống</span>
+                </li>
+            </ul>
+        </div>
+        <div class="screen-area">
+            <h4 class="screen">screen</h4>
+            <div class="screen-thumb" id="screen-thumb">
+                <img src="/images/seat/screen-thumb.png" alt="movie">
+            </div>
+            <h5 class="subtitle">Ghế đơn</h5>
+            <div class="screen-wrapper">
+                <ul class="seat-area" id="seat-container">
+                </ul>
+            </div>
+        </div>
+        <div class="proceed-book bg_img"
+             data-background="/images/movie/movie-bg-proceed.jpg">
+            <div class="proceed-to-book">
+                <div class="book-item">
+                    <span>Bạn chọn ghế</span>
+                    <h3 class="title" id="selected-seats"></h3>
+                </div>
+                <div class="book-item">
+                    <span>Tổng cộng</span>
+                    <h3 class="title" id="total-price"></h3>
+                </div>
+                <div class="book-item">
+                    <a href="#" onclick="reserveSeats()" class="custom-button">Tiếp tục</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==========Movie-Section========== -->
+
+<!-- ==========Newslater-Section========== -->
+<div th:replace="index :: footer"></div>
+<!-- ==========Newslater-Section========== -->
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+
+<script>
+    function loadSeat() {
+        var jsonData ={
+            scheduleId: [[${schedule.getId()}]]
+        };
+        var jsonString = JSON.stringify(jsonData);
+
+        $.ajax({
+            type: "POST",
+            url: "/seat/loadSeat",
+            data: jsonString,
+            contentType: "application/json",
+            success: function (data) {
+                // Xử lý dữ liệu đã tải và hiển thị trong div với id "result"
+                displaySeat(JSON.parse(data));
+            },
+            error: function () {
+                alert("Có lỗi xảy ra trong quá trình tải dữ liệu!");
+            }
+        });
+    }
+    function displaySeat(list){
+        var numOfSeat = list.length;
+        var MAX_COL = 14;
+        var row = numOfSeat/MAX_COL;
+        var character = 'A';
+        // Hiển thị seat
+        var seatContainer = document.getElementById("seat-container");
+        var html ="";
+        for (var i=0; i<row; i++){
+            var head = String.fromCharCode(character.charCodeAt(0) + i);;
+            html+= '<li class="seat-line">' +
+                       '<span>'+head+'</span>' +
+                        '<ul class="seat--area">';
+            for (var j=1; j<=14; j++){
+                var seat =list[i*14+j-1];
+                if (j==1 || j==5 || j==11){
+                    html+='<li class="front-seat">' +
+                        '<ul>';
+                }
+                if (seat.status=="BOOKED"){
+                    html+='<li class="single-seat">'+
+                        '<img src="/images/seat/seat01.png" alt="seat">'+
+                        '</li>';
+                }else if (seat.status=="PROCESSED"){
+                    html+='<li class="single-seat seat-process">' +
+                        '<img src="/images/seat/seat01-processed.png" alt="seat">' +
+                        '<span class="sit-num">'+seat.name+'</span>' +
+                        '</li>';
+                }else{
+                    html+='<li  onclick="seatSelected(this)" class="single-seat seat-free">' +
+                        '<img src="/images/seat/seat01-free.png" alt="seat">' +
+                        '<span class="sit-num"  id="'+seat.id+'">'+seat.name+'</span>' +
+                        '</li>';
+                }
+                if (j==4||j==10|| j==14){
+                    html+=' </ul>' +
+                        '</li>';
+                }
+            }
+            html+='</ul>' +
+                   '<span>'+head+'</span>' +
+               '</li>';
+        }
+        seatContainer.innerHTML = html;
+    }
+
+    var startDate = new Date("[[${schedule.startDate}]]");
+    function displayRemainingTime() {
+        var currentTime = new Date(); // Thời gian hiện tại
+        var timeDifference = startDate - currentTime; // Độ chênh lệch thời gian
+
+        // Tính toán các thành phần thời gian còn lại
+        var days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+        // Hiển thị thời gian còn lại trong một phần tử HTML
+        var countdownElement = document.getElementById("countdown");
+        countdownElement.innerHTML = days + " ngày " + hours + " giờ " + minutes + " phút " + seconds + " giây";
+
+        // Kiểm tra nếu thời gian đã kết thúc
+        if (timeDifference < 0) {
+            countdownElement.innerHTML = "Hết thời gian";
+            clearInterval(interval); // Dừng đếm ngược
+        }
+    }
+    // Gọi hàm displayRemainingTime mỗi giây
+    var interval = setInterval(displayRemainingTime, 1000);
+
+    $(document).ready(function () {
+        // Tải dữ liệu ban đầu khi trang được tải
+        loadSeat();
+    });
+
+    var selectedSeats;
+    function seatSelected(seat) {
+        var seatImage = seat.querySelector('img');
+
+        // Lấy tất cả các phần tử có class "selected"
+        selectedSeats = document.querySelectorAll(".selected");
+        // Kiểm tra trạng thái chọn ghế
+        var isSeatSelected = seat.classList.contains('selected');
+
+        if (isSeatSelected) {
+            // Nếu ghế đã được chọn trước đó, hủy chọn ghế
+            seat.classList.remove('selected');
+
+            // Đặt lại ảnh ghế về ảnh gốc
+            seatImage.src = '/images/seat/seat01-free.png';
+        } else {
+            if (selectedSeats.length>=3){
+                showWarning(false,'Vui lòng chỉ chọn tối đa 3 ghế','Thử lại','#screen-thumb');
+                return;
+            }
+            // Nếu ghế chưa được chọn trước đó, thực hiện chọn ghế
+            seat.classList.add('selected');
+            // Đặt lại ảnh ghế thành ảnh đã chọn
+            seatImage.src = '/images/seat/seat01-booked.png';
+        }
+        selectedSeats = document.querySelectorAll(".selected");
+        var selectedSeatsString ="";
+        // Lặp qua các phần tử đã lấy được
+        selectedSeats.forEach(function(seat) {
+            // Thực hiện các thao tác mong muốn với mỗi ghế đã chọn
+            selectedSeatsString= selectedSeatsString+ seat.querySelector('span').innerText+'  ';
+        });
+
+        var selectedSeatsElement = document.getElementById("selected-seats");
+        var totalPrice = document.getElementById("total-price");
+        selectedSeatsElement.textContent = selectedSeatsString;
+        totalPrice.textContent = ''+ [[${schedule.getPrice()}]]*selectedSeats.length/1000+'K';
+    }
+
+    function reserveSeats(){
+        var seatIds = [];
+        var targetUrl;
+        var title;
+        var isSuccess;
+        var button;
+        if (selectedSeats && selectedSeats.length>0){
+            selectedSeats.forEach(function (seat){
+                seatIds.push(seat.querySelector('span').getAttribute("id"));
+            })
+            var booking ={
+                userId: [[${#authentication.principal.getId()}]],
+                scheduleId: [[${schedule.getId()}]],
+                listSeatIds: seatIds
+            };
+            console.log(booking);
+            var jsonString = JSON.stringify(booking);
+            $.ajax({
+                type: "POST",
+                url: "/seat/reserveSeats",
+                data: jsonString,
+                contentType: "application/json",
+                success: function (data) {
+                    // Xử lý dữ liệu đã tải và hiển thị trong div với id "result"
+                    console.log("response: "+data);
+                    var response = JSON.parse(data);
+
+                    if (response.success){
+                        isSuccess=true;
+                        title="Đặt chỗ ngồi thành công.";
+                        button="Thanh toán";
+                        targetUrl="/payment/checkout?bid="+response.billId;
+                    }else{
+                        isSuccess=false;
+                        title="Đã có người chọn ghế trước bạn. Vui lòng thử lại!";
+                        button="Thử lại";
+                        targetUrl="/seat/plan?sid="+[[${schedule.getId()}]];
+                    }
+                    showWarning(isSuccess,title, button, targetUrl);
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra trong quá trình tải dữ liệu!");
+                }
+            });
+        }else{
+            showWarning(false,'Bạn chưa chọn ghế.','Chọn ghế','#screen-thumb');
+        }
+    }
+
+    var element = document.querySelector(".window-warning");
+    var titleElement = document.querySelector('.window-warning .title');
+    function showWarning(isSuccess,title, button, targetUrl){
+        var subtitleElement = document.querySelector('.window-warning .subtitle');
+        var bookButton = document.querySelector(".bookButton");
+        element.classList.remove("inActive");
+        if(isSuccess){
+            subtitleElement.textContent = 'Thành công!';
+            titleElement.classList.add("text-info");
+        }else{
+            subtitleElement.textContent = 'Thất bại!';
+            titleElement.classList.add("text-danger");
+        }
+        titleElement.textContent =title;
+        bookButton.textContent=button;
+        bookButton.href =targetUrl;
+    }
+
+    function closeWarning(){
+        element.classList.add("inActive");
+        titleElement.classList.remove("text-info");
+        titleElement.classList.remove("text-danger");
+    }
+</script>
+</body>
+</html>

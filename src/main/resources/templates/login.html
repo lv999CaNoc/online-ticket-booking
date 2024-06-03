@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!--    CSS     -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>Đăng nhập</title>
+</head>
+<body>
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Sign-In-Section========== -->
+<section class="account-section bg_img" data-background="/images/account-bg.jpg">
+    <div class="container">
+        <div class="padding-top padding-bottom">
+            <div class="account-area">
+                <div class="section-header-3">
+                    <h2 class="title">welcome back</h2>
+                </div>
+
+                <div th:if="${param.error}" class="alert text-center" >
+                    <span class="text-danger">Tên đăng nhập hoặc mật khẩu không chính xác.</span>
+                </div>
+                <div th:if="${param.logout}" class="alert text-center">
+                    <span class="text-success">Bạn đã đăng xuất thành công.</span>
+                </div>
+
+                <form class="account-form" th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <label for="email2">Username<span> *</span></label>
+                        <input type="text" name="username" placeholder="Enter username" id="email2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pass3">Password<span> *</span></label>
+                        <input type="password" name="password" placeholder="Password" id="pass3" required>
+                    </div>
+                    <div class="form-group checkgroup">
+                        <input type="checkbox" id="bal2" required checked>
+                        <label for="bal2">remember me</label>
+                        <a href="#0" class="forget-pass">Forget Password</a>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="log in">
+                    </div>
+                </form>
+
+                <div class="option">
+                    Don't have an account? <a th:href="@{/register}">sign up now</a>
+                </div>
+                <div class="or"><span>Or</span></div>
+                <ul class="social-icons">
+                    <li>
+                        <a href="#0">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#0" class="active">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#0">
+                            <i class="fab fa-google"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Sign-In-Section========== -->
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

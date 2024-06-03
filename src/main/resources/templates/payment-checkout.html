@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--    CSS     -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.animatedheadline.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>Movie checkout</title>
+</head>
+<body>
+<!-- ==========Preloader========== -->
+<div th:replace="index :: preloader"></div>
+<!-- ==========Preloader========== -->
+
+<!-- ==========Overlay========== -->
+<div th:replace="index :: overlay"></div>
+<!-- ==========Overlay========== -->
+
+<!-- ==========Header-Section========== -->
+<div th:replace="index :: header"></div>
+<!-- ==========Header-Section========== -->
+
+<!-- ==========Banner-Section========== -->
+<div th:replace="seat-plan :: banner"></div>
+<!-- ==========Banner-Section========== -->
+
+<!-- ==========Window-Warning-Section========== -->
+<section class="window-warning inActive">
+    <div class="lay"></div>
+    <div class="warning-item">
+        <h6 class="subtitle"></h6>
+        <h4 class="title"></h4>
+        <a href="#" class="custom-button bookButton" onclick="closeWarning()"><i class="fas fa-angle-right"></i></a>
+    </div>
+</section>
+<!-- ==========Window-Warning-Section========== -->
+
+<!-- ==========Page-Title========== -->
+<section class="page-title bg-one">
+    <div class="container">
+        <div class="page-title-area">
+            <div class="item md-order-1">
+                <a href="/movie/seat-plan" class="custom-button back-button">
+                    <i class="flaticon-double-right-arrows-angles"></i>back
+                </a>
+            </div>
+            <div class="item">
+                <h5 class="title">Checkout</h5>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Page-Title========== -->
+
+<!-- ==========Movie-Section========== -->
+<div class="movie-facility padding-bottom padding-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="checkout-widget checkout-card mb-0">
+                    <h5 class="title">Thanh toán</h5>
+                    <ul class="payment-option">
+                        <li class="active">
+                            <a href="#0">
+                                <img src="/images/payment/paypal.png" alt="payment">
+                                <span>paypal</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#0">
+                                <img src="/images/payment/card.png" alt="payment">
+                                <span>Credit Card</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <form class="payment-card-form" method="post" action="/payment/process">
+                        <input type="text" hidden name="billId" th:value="${billId}">
+                        <div class="form-group w-100">
+                            <label for="card1">Số tiền ($)</label>
+                            <input type="text" id="card1" name="price" readonly>
+                            <div class="right-icon">
+                                <i class="flaticon-lock"></i>
+                            </div>
+                        </div>
+                        <div class="form-group w-100">
+                            <label for="card2">Mô tả</label>
+                            <input type="text" id="card2" name="description" readonly>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="custom-button" value="Thanh toán">
+                        </div>
+                    </form>
+                    <p class="notice">
+                        Nếu nhấn nút "Thanh toán", bạn đã đồng ý với <a href="#0">điều khoản và điều lệ</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="booking-summery bg-one">
+                    <h4 class="title">BOOKING SUMMERY</h4>
+                    <ul>
+                        <li>
+                            <h6 class="subtitle" th:text="${movie.title}"></h6>
+                        </li>
+                        <li>
+                            <h6 class="subtitle"><span>Địa chỉ: </span><span th:text="${room.getBranch().getName()}"></span></h6>
+                            <div class="info">
+                                <span th:text="${#dates.format(schedule.getStartDate(), 'HH:mm dd/MM/yyyy')}"></span>
+                        </li>
+                        <li>
+                            <h6 class="subtitle mb-0"><span>Giá vé đơn:</span><span id="price"></span></h6>
+                            </li>
+                    </ul>
+                    <ul class="side-shape">
+                        <li>
+                            <h6 class="subtitle mb-0"><span th:text="${tickets.size()}+' tickets: '"></span><span id="totalPrice"></span></h6>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <h6 class="subtitle mb-0"><span>VAT</span><span id="vatPrice"></span></h6>
+                            <span class="info"><span>5%</span></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="proceed-area  text-center">
+                    <h6 class="subtitle"><span>Tổng cộng</span><span id="allPrice-s"></span></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==========Movie-Section========== -->
+
+<!-- ==========Newslater-Section========== -->
+<div th:replace="index :: footer"></div>
+<!-- ==========Newslater-Section========== -->
+
+
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/viewport.jquery.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function loadData(){
+        var  pricePlace= document.getElementById("price");
+        var  totalPricePlace= document.getElementById("totalPrice");
+        var  vatPricePlace= document.getElementById("vatPrice");
+        var  allPricePlace= document.getElementById("allPrice-s");
+
+        var price = [[${schedule.getPrice()}]]/1000;
+        var totalPrice = price* [[${tickets.size()}]]
+        var vatPrice = totalPrice*5/100;
+        var allPrice = totalPrice+vatPrice;
+        var allPriceUSD = (allPrice / 23).toFixed(2);
+
+        pricePlace.textContent=price+'K';
+        totalPricePlace.textContent=totalPrice+'K';
+        vatPricePlace.textContent=vatPrice+'K';
+        allPricePlace.textContent=allPrice+'K';
+
+        var card1 = document.getElementById('card1');
+        card1.value = allPriceUSD;
+        var card2 = document.getElementById('card2');
+        card2.value = 'Booking movie bill ID = '+[[${billId}]];
+    }
+
+    var element = document.querySelector(".window-warning");
+    var titleElement = document.querySelector('.window-warning .title');
+    function showWarning(isSuccess,title, button, targetUrl){
+        var subtitleElement = document.querySelector('.window-warning .subtitle');
+        var bookButton = document.querySelector(".bookButton");
+        element.classList.remove("inActive");
+        if(isSuccess){
+            subtitleElement.textContent = 'Thành công!';
+            titleElement.classList.add("text-info");
+        }else{
+            subtitleElement.textContent = 'Thất bại!';
+            titleElement.classList.add("text-danger");
+        }
+        titleElement.textContent =title;
+        bookButton.textContent=button;
+        bookButton.href =targetUrl;
+    }
+
+    function closeWarning(){
+        element.classList.add("inActive");
+        titleElement.classList.remove("text-info");
+        titleElement.classList.remove("text-danger");
+    }
+
+    $(document).ready(function () {
+        // Tải dữ liệu ban đầu khi trang được tải
+        loadData();
+        var  paymentResult = "[[${message}]]";
+        if (paymentResult=='success'){
+            showWarning(true, 'Thanh toán thành công.','Lịch sử mua vé','/ticket/history');
+        }else if (paymentResult=='failure'){
+            showWarning(false, 'Thanh toán thất bại.','Thử lại','#');
+        }
+    });
+</script>
+</body>
+</html>

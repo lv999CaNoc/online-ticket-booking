@@ -1,0 +1,1 @@
+create schema actvn_cinema collate utf8_bin;
