@@ -47,10 +47,10 @@
           <a th:href="@{/}">Home</a>
         </li>
         <li>
-          <a>Phim</a>
+          <a class="active">Phim</a>
           <ul class="submenu">
             <li>
-              <a href="/movie/list"  class="active">Danh sách</a>
+              <a href="/movie/list">Danh sách</a>
             </li>
             <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
               <a href="/movie/new">Thêm phim</a>
