@@ -144,15 +144,13 @@
         <div class="widget-1 widget-check">
           <div class="widget-header">
             <h5 class="m-title">Bộ lọc</h5>
-            <a href="#content-section" onclick="filter()" class="apply-check">Apply</a>
-            <a href="/movie/list" class="clear-check">Clear</a>
           </div>
           <div class="widget-1-body">
             <h6 class="subtitle">Độ tuổi</h6>
             <div class="check-area">
               <th:block th:each="rate: ${listRated}">
                 <div class="form-group">
-                  <input type="checkbox" name="rate" th:id="${rate.name()}">
+                  <input type="checkbox" name="rate" th:id="${rate.name()}" th:onchange="filter()">
                   <label th:for="${rate.name()}">[[${rate.description}]]</label>
                 </div>
               </th:block>
@@ -165,7 +163,7 @@
             <div class="check-area">
               <th:block th:each="cate: ${listCategories}">
                 <div class="form-group">
-                  <input type="checkbox" name="cate" th:id="${cate.id}">
+                  <input type="checkbox" name="cate" th:id="${cate.id}" th:onchange="filter()">
                   <label th:for="${cate.id}">[[${cate.name}]]</label>
                 </div>
               </th:block>
