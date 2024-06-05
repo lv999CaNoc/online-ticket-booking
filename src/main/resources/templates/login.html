@@ -34,9 +34,14 @@
                 <div class="section-header-3">
                     <h2 class="title">welcome back</h2>
                 </div>
-
+                <div th:if="${param.tokenError}" class="alert text-center" >
+                    <span class="text-danger">Giá trị token không hợp lệ.</span>
+                </div>
                 <div th:if="${param.error}" class="alert text-center" >
                     <span class="text-danger">Tên đăng nhập hoặc mật khẩu không chính xác.</span>
+                </div>
+                <div th:if="${param.tokenSuccess}" class="alert text-center">
+                    <span class="text-success">Tài khoản đã được kích hoạt. Vui lòng đăng nhập.</span>
                 </div>
                 <div th:if="${param.logout}" class="alert text-center">
                     <span class="text-success">Bạn đã đăng xuất thành công.</span>
@@ -49,7 +54,12 @@
                     </div>
                     <div class="form-group">
                         <label for="pass3">Password<span> *</span></label>
-                        <input type="password" name="password" placeholder="Password" id="pass3" required>
+                        <div class="password-container">
+                            <input type="password" name="password" placeholder="Password" id="pass3" required>
+                            <span class="toggle-password" onclick='togglePassword(this, "pass3")'>
+                                <i class="fas fa-eye-slash"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="form-group checkgroup">
                         <input type="checkbox" id="bal2" required checked>

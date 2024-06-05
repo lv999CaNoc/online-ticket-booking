@@ -4,6 +4,8 @@ import com.actvn.cinema.exception.UserNotFoundException;
 import com.actvn.cinema.model.User;
 import com.actvn.cinema.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +38,11 @@ public class UserController {
     public String registerOk(@Valid @ModelAttribute("user") final User user,
                              final BindingResult bindingResult) {
         return userService.registerSuccessfully(user, bindingResult);
+    }
+
+    @GetMapping("/verify")
+    public String verify(@RequestParam("token") String token) {
+        return userService.verifyEmail(token);
     }
 
     @GetMapping("/user/search")

@@ -35,9 +35,10 @@
                 </div>
                 <div th:if="${param.success}" class="alert text-center text-success">Đăng ký thành công. Vui lòng kiểm tra địa chỉ email để kích hoạt tài khoản của bạn.</div>
 
-                <form class="account-form" th:object="${user}" th:action="@{/register}" method="post">
+                <form id="registrationForm" class="account-form" th:object="${user}" th:action="@{/register}" method="post">
 
                     <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger">Email error</span>
+                    <span id="emailError" class="text-danger" style="display:none;">Email không hợp lệ</span>
                     <div class="form-group">
                         <input type="email" name="email" th:field="*{email}" placeholder="Enter Your Email" id="email1" required>
                     </div>
@@ -49,12 +50,24 @@
                     </div>
 
                     <div class="form-group">
-                        <input type="password" name="password" th:field="*{password}" placeholder="Password" id="pass1"
-                               required minlength="6">
+                        <div class="password-container">
+                            <input type="password" name="password" th:field="*{password}" placeholder="Password" id="pass1"
+                                   required minlength="6">
+                            <span onclick="togglePassword(this, 'pass1')" class="toggle-password">
+                                <i class="fas fa-eye-slash"></i>
+                            </span>
+                        </div>
                     </div>
+
+                    <span id="passNotEqual" class="text-danger" style="display:none;">Mật khẩu và mật khẩu nhập lại không khớp.</span>
                     <div class="form-group">
-                        <input type="password" placeholder="Comfirm Password" id="pass2"
-                               required minlength="6">
+                        <div class="password-container">
+                            <input type="password" placeholder="Confirm Password" id="pass2"
+                                   required minlength="6">
+                            <span onclick="togglePassword(this, 'pass2')" class="toggle-password">
+                                <i class="fas fa-eye-slash"></i>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -65,13 +78,15 @@
                         <input type="text" th:field="*{lastName}" placeholder="Last name"
                                required maxlength="10">
                     </div>
+
+                    <span id="phoneError" class="text-danger" style="display:none;">Số điện thoại không hợp lệ</span>
                     <div class="form-group">
-                        <input type="text" th:field="*{phoneNumber}" placeholder="Phone number" id="Phone"
+                        <input type="text" th:field="*{phoneNumber}" placeholder="Phone number" id="phone"
                                required minlength="10" maxlength="10">
                     </div>
 
                     <div class="form-group checkgroup">
-                        <input type="checkbox" id="bal" required>
+                        <input type="checkbox" id="bal" checked>
                         <label for="bal">I agree to the <a href="#0">Terms, Privacy Policy</a> and <a href="#0">Fees</a></label>
                     </div>
                     <div class="form-group text-center">
@@ -119,6 +134,46 @@
 <script th:src="@{/js/viewport.jquery.js}"></script>
 <script th:src="@{/js/nice-select.js}"></script>
 <script th:src="@{/js/main.js}"></script>
+
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+        const emailField = document.getElementById('email1');
+        const emailError = document.getElementById('emailError');
+        const email = emailField.value;
+        const phoneField = document.getElementById('phone');
+        const phoneError = document.getElementById('phoneError');
+        const phone = phoneField.value;
+        const pass1 = document.getElementById('pass1').value;
+        const pass2 = document.getElementById('pass2').value;
+        const passNotEqual = document.getElementById('passNotEqual');
+
+        if (!validateEmail(email)) {
+            emailError.style.display = 'block';
+            event.preventDefault();
+        }
+
+        if (pass1 !== pass2){
+            passNotEqual.style.display = 'block';
+            event.preventDefault();
+        }
+
+        if (!validatePhone(phone)) {
+            phoneError.style.display = 'block';
+            event.preventDefault();
+        }
+    });
+
+    function validateEmail(email) {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    function validatePhone(phone) {
+        const re = /^[0-9]{10}$/;
+        return re.test(phone);
+    }
+
+</script>
 
 </body>
 </html>

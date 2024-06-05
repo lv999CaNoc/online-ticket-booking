@@ -9,6 +9,7 @@ import com.actvn.cinema.service.MailService;
 import com.actvn.cinema.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.validation.FieldError;
 import javax.mail.MessagingException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +36,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${site.base.url}")
+    private String BASE_URL;
 
     @Override
     public String login(final Principal principal) {
@@ -79,12 +84,43 @@ public class UserServiceImpl implements UserService {
         token.setValue(tokenValue);
         token.setUser(user);
         tokenRepository.save(token);
-        String url = "Xin chào " + user.getFirstName() + "! Bạn đã đăng ký tài khoản thành công, truy cập vào địa chỉ: localhost:8080/token?value=" + tokenValue + " để xác nhận.";
+
+        String subject = "[Cinema] Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "Actvn Cinema App.";
+
+        content = content.replace("[[name]]", user.getUsername());
+        String verifyURL = BASE_URL + "/verify?token=" + token.getValue();
+
+        content = content.replace("[[URL]]", verifyURL);
+
         try {
-            mailService.sendMail(user.getEmail(), "Register", url, false);
+            mailService.sendMail(user.getEmail(), subject, content, true);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String verifyEmail(String value) {
+        Token token = tokenRepository.findByValue(value);
+        if (Objects.isNull(token)) {
+            return "redirect:login?tokenError";
+        }
+        Optional<User> user = userRepository.findById(token.getUser().getId());
+        if (Objects.isNull(user)) {
+            return "redirect:login?tokenError";
+        }
+
+        User verifyUser = user.get();
+        verifyUser.setEnabled(true);
+        userRepository.save(verifyUser);
+
+        tokenRepository.delete(token);
+        return "redirect:login?tokenSuccess";
     }
 
     private boolean userEmailExists(final String email) {

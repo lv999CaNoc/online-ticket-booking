@@ -7522,7 +7522,7 @@ input[type="submit"] {
 }
 
 .account-area .account-form .form-group input:focus {
-  border-color: #f1481f;
+  border-color: #bff195;
 }
 
 .account-area .account-form .form-group input[type="submit"] {
@@ -9107,5 +9107,22 @@ aside {
     -webkit-transform: scale(1, 1);
     opacity: 0;
   }
+}
+
+.password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.toggle-password .fas {
+  font-size: 16px;
+  color: #333;
 }
 /*# sourceMappingURL=main.css.map */

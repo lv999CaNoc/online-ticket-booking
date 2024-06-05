@@ -34,7 +34,67 @@
 <!-- ==========Overlay========== -->
 
 <!-- ==========Header-Section========== -->
-<div th:replace="index :: header"></div>
+<header th:fragment="header" class="header-section">
+  <div class="container">
+    <div class="header-wrapper">
+      <div class="logo">
+        <a th:href="@{/}">
+          <img src="/images/logo.png" alt="logo">
+        </a>
+      </div>
+      <ul class="menu">
+        <li>
+          <a th:href="@{/}">Home</a>
+        </li>
+        <li>
+          <a>Phim</a>
+          <ul class="submenu">
+            <li>
+              <a href="/movie/list"  class="active">Danh sách</a>
+            </li>
+            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+              <a href="/movie/new">Thêm phim</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#0">Rạp ACTVN</a>
+          <ul class="submenu">
+            <li>
+              <a href="#">Tất cả các rạp</a>
+            </li>
+            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+              <a href="/branch/new">Thêm rạp</a>
+            </li>
+          </ul>
+        </li>
+
+        <li th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authorization.expression('hasRole(''MANAGER'')')}">
+          <a href="/dashboard">Dashboard</a>
+        </li>
+        <li href="#0" sec:authorize="isAuthenticated()">
+          <a><i class="fas fa-user-circle"></i>&nbsp&nbsp
+            <span sec:authentication="name"></span></a>
+          <ul class="submenu">
+            <li>
+              <a href="/ticket/history">Lịch sử mua vé</a>
+            </li>
+          </ul>
+        </li>
+
+        <li  class="header-button pr-0">
+          <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
+          <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Logout</a>
+        </li>
+      </ul>
+      <div class="header-bar d-lg-none">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</header>
 <!-- ==========Header-Section========== -->
 
 <!-- ==========Banner-Section========== -->

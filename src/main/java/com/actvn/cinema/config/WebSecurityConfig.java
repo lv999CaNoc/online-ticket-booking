@@ -18,7 +18,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
 
     private static final String[] PERMITTED_URLS = {
-            "/",
+            "/","/verify*",
             "/user/login*", "/user/register*",
             "/movie/details*", "/movie/list*", "/move/search-advantage*", "/movie/filter-movie*",
             "/branch/get-by-city*",

@@ -16,6 +16,8 @@ public interface UserService {
 
     String registerSuccessfully(final User user, final BindingResult bindingResult);
 
+    String verifyEmail(String value);
+
     List<User> findUserByRole(String role);
 
     List<User> findUserByUsernameOrEmail(String search, String role);
