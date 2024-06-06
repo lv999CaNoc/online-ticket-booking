@@ -97,4 +97,11 @@ public class BillServiceImpl implements BillService {
         if (result.isPresent()) return result.get();
         throw new BillNotFoundException("Không tìm bill với id = " + id);
     }
+
+    @Override
+    public Long countBillOfMonth() {
+        return billRepository.countOfMonth();
+    }
+
+
 }

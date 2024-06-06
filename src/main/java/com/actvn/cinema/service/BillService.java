@@ -10,4 +10,6 @@ public interface BillService {
     Integer createNewBill(BookingRequestDTO bookingRequestDTO) throws RuntimeException;
 
     Bill getBillById(Integer billId) throws BillNotFoundException;
+
+    Long countBillOfMonth();
 }

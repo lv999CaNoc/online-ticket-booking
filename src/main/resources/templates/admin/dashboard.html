@@ -82,7 +82,7 @@
 					</a>
 
 					<ul class="collapse sidebar__menu" id="collapseMenu1">
-						<li><a th:href="@{/dashboard/management-branch}">Quản lý rạp</a></li>
+						<li th:if="${#authorization.expression('hasRole(''ADMIN'')')}" ><a th:href="@{/dashboard/management-branch}">Quản lý rạp</a></li>
 						<li><a th:href="@{/dashboard/management-room}">Quản lý phòng</a></li>
 						<li><a th:href="@{/dashboard/management-movie}">Quản lý phim</a></li>
 						<li><a th:href="@{/dashboard/management-schedule}">Quản lý lịch chiếu</a></li>
@@ -90,7 +90,7 @@
 				</li>
 				<!-- end collapse -->
 
-				<li class="sidebar__nav-item">
+				<li th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="sidebar__nav-item">
 					<a class="sidebar__nav-link" data-toggle="collapse" href="#collapseMenu2" role="button" aria-expanded="false" aria-controls="collapseMenu">
 						<i class="icon ion-ios-contacts">
 						</i> <span>Người dùng</span>
@@ -120,9 +120,15 @@
 				<div class="col-12">
 					<div class="main__title">
 						<h2>Dashboard</h2>
-							<a style="margin-left: auto;" href="/branch/new" class="main__title-link">Thêm rạp</a>
+						<span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+							<a href="/branch/new" class="main__title-link">Thêm rạp</a>
 							<a href="/manager/new" class="main__title-link">Thêm quản lý</a>
+						</span>
+						<span th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+							<a href="/room/new" class="main__title-link" >Thêm phòng</a>
+							<a href="/schedule/new" class="main__title-link">Thêm lịch chiếu</a>
 							<a href="/movie/new" class="main__title-link">Thêm phim</a>
+						</span>
 					</div>
 				</div>
 				<!-- end main title -->
@@ -131,7 +137,7 @@
 				<div class="col-12 col-sm-6 col-lg-3">
 					<div class="stats">
 						<span>Vé bán trong tháng</span>
-						<p>11</p>
+						<p>[[${cntBill}]]</p>
 						<i class="icon ion-ios-stats"></i>
 					</div>
 				</div>
@@ -162,7 +168,7 @@
 				<div class="col-12 col-sm-6 col-lg-3">
 					<div class="stats">
 						<span>Đang truy cập</span>
-						<p>1</p>
+						<p>2</p>
 						<i class="icon ion-ios-eye"></i>
 					</div>
 				</div>

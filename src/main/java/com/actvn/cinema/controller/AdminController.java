@@ -19,6 +19,7 @@ public class AdminController {
     @Autowired private ScheduleService scheduleService;
     @Autowired private UserService userService;
     @Autowired private ManagerService managerService;
+    @Autowired private BillService billService;
 
     @GetMapping
     public String getDashboardPage(Model model){
@@ -27,9 +28,13 @@ public class AdminController {
 
         List<Movie> top10Movies = movieService.listTop3ByOrderByLikePercentageDesc();
 
+        Long cntBills = billService.countBillOfMonth();
+
         List<User> listUser = userService.findUserByRole("ROLE_USER");
 
         model.addAttribute("pageTitle","Dashboard");
+        model.addAttribute("cntBill",cntBills);
+
         model.addAttribute("listMovieNowShowing",listMovieNowShowing);
         model.addAttribute("listMovieComingSoon",listMovieComingSoon);
         model.addAttribute("top10Movies",top10Movies);
