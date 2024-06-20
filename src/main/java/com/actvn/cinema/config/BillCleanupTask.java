@@ -15,11 +15,11 @@ import java.util.List;
 public class BillCleanupTask {
     @Autowired private BillRepository billRepository;
 
-    @Scheduled(fixedRate = 3*60000) // Chạy mỗi 3 phút
+    @Scheduled(fixedRate = 5*60000) // Chạy mỗi 5 phút
     public void billCleanupTask() {
         System.out.println("billCleanupTask: Cleanup Bill running...");
-        LocalDateTime twoMinutesAgo = LocalDateTime.now().minusMinutes(2);
-        List<Bill> expiredBills = billRepository.findByCreatedTimeBeforeAndStatus(twoMinutesAgo, "PENDING");
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
+        List<Bill> expiredBills = billRepository.findByCreatedTimeBeforeAndStatus(fiveMinutesAgo, "PENDING");
         for (Bill bill: expiredBills) {
             bill.setStatus("CANCEL");
         }

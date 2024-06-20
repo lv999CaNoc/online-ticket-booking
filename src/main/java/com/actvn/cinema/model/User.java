@@ -28,7 +28,7 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @Size(min = 4, message = "Username tối thiểu 4 ký tự")
-    @Size(max = 20, message = "Username tối đa 10 ký tự")
+    @Size(max = 60, message = "Username tối đa 60 ký tự")
     private String username;
 
     @Column(nullable = false)
@@ -46,12 +46,8 @@ public class User implements UserDetails {
     @Pattern(regexp = "\\d{10}", message = "Vui lòng nhập 10 chữ số.")
     private String phoneNumber;
 
-    @Size(max = 10, message = "Nhập tối đa 10 ký tự")
-    @NotBlank(message = "Hãy nhập tên của bạn")
     private String firstName;
 
-    @Size(max = 10, message = "Nhập tối đa 10 ký tự")
-    @NotBlank(message = "Hãy nhập họ của bạn")
     private String lastName;
 
     @Column(name = "enabled", nullable = false)
