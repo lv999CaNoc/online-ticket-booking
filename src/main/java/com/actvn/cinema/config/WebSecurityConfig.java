@@ -27,15 +27,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTHENTICATION_URLS = {
             "/ticket/plan*",
-            "/payment**",
-            "/seat**",
-            "/ticket**"
+            "/payment/**",
+            "/seat/**",
+            "/ticket/**"
     };
 
     private static final String[] ROLE_ADMIN_MANAGER_URLS = {
-            "/user/search*", "/user/lock*", "/user/unlock*",
-            "/movie**", "/branch**", "/schedule**", "/dashboard**",
-            "/manager/search**", "/room**", "/seat**", "/ticket**"
+            "/user/search**", "/user/lock**", "/user/unlock**",
+            "/movie**", "/branch/**", "/schedule/**", "/dashboard/**",
+            "/manager/search**", "/room**", "/seat/**", "/ticket/**"
     };
 
     @Bean
@@ -56,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PERMITTED_URLS).permitAll()
                 .antMatchers(AUTHENTICATION_URLS).authenticated()
                 .antMatchers(ROLE_ADMIN_MANAGER_URLS).hasAnyRole("ADMIN","MANAGER")
-                .antMatchers("/manager**").hasAnyRole("ADMIN")
+                .antMatchers("/manager/**").hasAnyRole("ADMIN")
                 .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
