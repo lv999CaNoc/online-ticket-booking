@@ -73,20 +73,4 @@ public class BranchController {
         }
         return "redirect:/dashboard/management-branch";
     }
-
-    @PostMapping("/get-by-city")
-    @ResponseBody
-    public String loadData(@RequestBody CityDTO city) throws JsonProcessingException {
-        List<Branch> listBranch;
-        if (city.getCity().isEmpty()){
-            listBranch = branchService.listAll();
-        }else{
-            listBranch = branchService.findBranchByCity(city.getCity());
-        }
-        // Chuyển danh sách thành JSON
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(listBranch);
-        System.out.println(json);
-        return json;
-    }
 }

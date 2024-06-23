@@ -12,8 +12,6 @@ import java.util.List;
 public interface BillRepository extends JpaRepository<Bill, Integer> {
     List<Bill> findByCreatedTimeBeforeAndStatus(LocalDateTime time, String status);
 
-    List<Bill> findByUser_Id(Long userId);
-
     @Query("SELECT COUNT(b) FROM Bill b WHERE MONTH(b.createdTime) = MONTH(CURRENT_DATE) AND YEAR(b.createdTime) = YEAR(CURRENT_DATE)")
     Long countOfMonth();
 }

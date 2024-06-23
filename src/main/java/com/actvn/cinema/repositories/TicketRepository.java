@@ -19,6 +19,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     @Query("SELECT t FROM Ticket t WHERE t.schedule.id=:scheduleId AND t.seat.id=:seatId AND t.bill.status IN (:status)")
     List<Ticket> findTicketsBySchedule_IdAndSeat_IdAAndBill_Status(@Param("scheduleId") Integer scheduleId,
                                                                    @Param("seatId") Long seatId, @Param("status") List<String> status);
-
     List<Ticket> findTicketsByBill_Id(Integer billId);
 }

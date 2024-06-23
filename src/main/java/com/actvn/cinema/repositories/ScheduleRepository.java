@@ -20,11 +20,4 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     @Query("SELECT s FROM Schedule s WHERE s.movie.id=:movieId AND s.room.branch.id=:branchId And s.startDate>=:startOfDay AND s.startDate <= :endOfDay")
     List<Schedule> findByMovie_IdAndBranch_IdAndDate(@Param("movieId") Integer movieId,
                                                      @Param("branchId") Integer branchId, @Param("startOfDay") Date startOfDay, @Param("endOfDay") Date endOfDay);
-
-    //    List<Schedule> getSchedulesByMovie_IdAndStartDateAndStartTimeAndRoom_Id(
-//            Integer movieId,
-//            LocalDate startDate,
-//            LocalTime startTime,
-//            Integer roomId);
-//
 }
