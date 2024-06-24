@@ -17,17 +17,6 @@ public class TicketServiceImpl implements TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
-//    TODO: delete
-//    @Override
-//    public List<Ticket> getTicketsByUserId(Long userId) throws NotFoundException {
-//        List<Ticket> tickets = ticketRepository.findTicketsByUserId(userId);
-//        if (tickets.isEmpty()) {
-//            log.info("[LOG] Không tìm thấy vé được mua bởi người dùng có ID: {}", userId);
-//            throw new NotFoundException("Không tìm thấy vé được mua bởi người dùng có ID: "+ userId);
-//        }
-//        return tickets;
-//    }
-
     @Override
     public List<Ticket> getTicketsByBillId(Integer billId) throws NotFoundException {
         List<Ticket> tickets = ticketRepository.findTicketsByBill_Id(billId);
