@@ -45,11 +45,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return scheduleRepository.findByMovie_IdAndBranch_IdAndDate(movieId,branchId,startOfDay,endOfDay);
     }
-//
-//    @Override
-//    public List<Schedule> getSchedules(Integer movieId, String startDate, String startTime, Integer roomId) {
-//        return scheduleRepository.getSchedulesByMovie_IdAndStartDateAndStartTimeAndRoom_Id(movieId, LocalDate.parse(startDate), LocalTime.parse(startTime), roomId);
-//    }
 
     @Override
     public List<Schedule> findScheduleByStartDate(Date searchDate){

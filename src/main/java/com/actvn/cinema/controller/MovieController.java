@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -151,7 +152,7 @@ public class MovieController {
 
     @PostMapping("/save")
     public String saveMovie(Movie movie, @RequestParam("categories") List<Integer> categoryIds,
-                           RedirectAttributes ra){
+                           RedirectAttributes ra, final BindingResult bindingResult){
 
         // Tạo Set<Category> từ danh sách categoryIds
         Set<Category> categories = new HashSet<>();
@@ -162,6 +163,10 @@ public class MovieController {
         // Gán Set<Category> vào trường categories của đối tượng Movie
         movie.setCategories(categories);
 
+        // Có lỗi validate data
+        if (bindingResult.hasErrors()) {
+            return "admin/movie-form";
+        }
         movieService.save(movie);
         ra.addFlashAttribute("successMessage", "Lưu thông tin phim thành công.");
         return "redirect:/dashboard/management-movie";

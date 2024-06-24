@@ -47,7 +47,7 @@
 
             <!-- form -->
             <div class="col-12">
-                <form th:action="@{/schedule/save}" th:method="POST" th:object="${schedule}" class="form">
+                <form id="schedule-form" th:action="@{/schedule/save}" th:method="POST" th:object="${schedule}" class="form">
                     <input type="hidden" th:field="*{id}">
                     <div class="row row--form">
 
@@ -69,7 +69,7 @@
                                     </select>
                                 </div>
                                 <div class="col-12">
-                                    <select th:field="*{movie}" class="js-example-basic-single" id="movie">
+                                    <select  th:field="*{movie}" class="js-example-basic-single" id="movie">
                                         <option value=""></option>
                                         <th:block th:each="m: ${listMovie}">
                                             <option th:value="${m.id}">[[${m.title}]]</option>
@@ -78,17 +78,17 @@
                                 </div>
                                 <div class="col-12 col-lg-6">
                                     <span>Price:</span>
-                                    <input type="number" required th:field="*{price}" class="form__input" placeholder="Price (VND) *">
+                                    <input type="text" id="price" required th:field="*{price}" class="form__input" placeholder="Price (VND) *">
                                 </div>
 
                                 <div class="col-12 col-lg-6">
                                     <span>Start date and time *</span>
-                                    <input type="text" required class="form__input" id="startDate" autocomplete="off" placeholder="HH:mm dd/MM/yyyy" th:field="*{startDate}"/>
+                                    <input type="text" required class="form__input" id="startDate" placeholder="HH:mm dd/MM/yyyy" th:field="*{startDate}"/>
                                     <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                 </div>
 
                                 <div class="col-12 col-lg-3">
-                                    <button type="submit" class="form__btn">Submit</button>
+                                    <button onclick="submitForm()" type="button" class="form__btn">Submit</button>
                                 </div>
                                 <div class="col-12 col-lg-3">
                                     <button onclick="cancelForm()" type="button" class="form__btn">cancel</button>
@@ -105,8 +105,47 @@
 <!-- end main content -->
 
 <script>
+    function submitForm() {
+        if (validationInput()){
+            document.getElementById("schedule-form").submit();
+        }
+    }
+
     function cancelForm(){
         window.location="/dashboard/management-schedule";
+    }
+
+    function validationInput(){
+        var selectedRoom = $('#room').val();
+        var selectedMovie =  $('#movie').val();
+
+        if (!selectedRoom || selectedRoom.length === 0) {
+            alert("Vui lòng chọn phòng..");
+            return false;
+        }
+
+        if (!selectedMovie || selectedMovie.length === 0) {
+            alert("Vui lòng chọn phim..");
+            return false;
+        }
+
+        if (isNaN($('#price').val().trim())){
+            alert("Truờng giá tiền không hợp lệ.");
+            return false;
+        }
+
+        var startDate = validateDateAndTime($('#startDate').val());
+        if (startDate === null){
+            alert("Vui lòng nhập thời gian bắt đầu đúng định dạng..");
+            return false;
+        }
+        var currentDate = new Date();
+        if (startDate<currentDate){
+            alert("Vui lòng nhập thời gian bắt đầu hợp lệ..");
+            return false;
+        }
+
+        return true;
     }
 </script>
 
@@ -120,5 +159,6 @@
 <script src="/js/jquery.mCustomScrollbar.min.js"></script>
 <script src="/js/select2.min.js"></script>
 <script src="/js/admin.js"></script>
+<script src="/js/helper.js"></script>
 </body>
 </html>

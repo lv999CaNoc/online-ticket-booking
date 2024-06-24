@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:th="http://www.thymeleaf.org">
-
-
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
@@ -47,7 +44,7 @@
 
             <!-- form -->
             <div class="col-12">
-                <form th:action="@{/manager/save}" th:method="POST" th:object="${manager}" class="form">
+                <form th:action="@{/manager/save}" th:method="POST" th:object="${manager}" class="form" id="managerForm">
                     <input type="hidden" th:field="*{id}">
                     <div class="row row--form">
 
@@ -62,7 +59,7 @@
                                     <input type="text" th:field="*{user.firstName}" class="form__input" placeholder="First name">
 
                                     <span>Username *:</span>
-                                    <input type="text" required th:field="*{user.username}" class="form__input" placeholder="Username *">
+                                    <input type="text" required th:field="*{user.username}" class="form__input" placeholder="Username *" minlength="4">
 
                                     <span>Password *:</span>
                                     <input type="password" required th:field="*{user.password}" class="form__input" placeholder="Password *">
@@ -75,12 +72,13 @@
                                     <input type="email" required th:field="*{user.email}" class="form__input" placeholder="Email *">
 
                                     <span>Phone number *:</span>
-                                    <input type="text" required th:field="*{user.phoneNumber}" class="form__input" placeholder="Phone number *">
+                                    <span id="phoneError" class="text-danger" style="display:none;">Số điện thoại không hợp lệ</span>
+                                    <input type="text" required th:field="*{user.phoneNumber}" class="form__input" placeholder="Phone number *" minlength="10" maxlength="10">
                                 </div>
 
                                 <div class="col-12">
                                     <h5>Thông tin rạp:</h5>
-                                    <select th:field="*{branch}" class="js-example-basic-single" id="branch">
+                                    <select required th:field="*{branch}" class="js-example-basic-single" id="branch">
                                         <option value=""></option>
                                         <th:block th:each="b: ${listBranch}">
                                             <option th:value="${b.id}">[[${b.name}]] - [[${b.diaChi}]]</option>
@@ -109,6 +107,13 @@
     function cancelForm(){
         window.location="/dashboard/management-manager";
     }
+
+    document.getElementById('managerForm').addEventListener('submit', function(event) {
+        if (!validatePhone(document.getElementById('phone').value)) {
+            document.getElementById('phoneError').style.display = 'block';
+            event.preventDefault();
+        }
+    })
 </script>
 
 <!-- JS -->
@@ -121,5 +126,7 @@
 <script src="/js/jquery.mCustomScrollbar.min.js"></script>
 <script src="/js/select2.min.js"></script>
 <script src="/js/admin.js"></script>
+<script src="/js/helper.js"></script>
+
 </body>
 </html>

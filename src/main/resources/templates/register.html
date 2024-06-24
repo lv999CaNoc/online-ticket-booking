@@ -132,6 +132,7 @@
 <script th:src="@{/js/viewport.jquery.js}"></script>
 <script th:src="@{/js/nice-select.js}"></script>
 <script th:src="@{/js/main.js}"></script>
+<script src="/js/helper.js"></script>
 
 <script>
     document.getElementById('registrationForm').addEventListener('submit', function(event) {
@@ -161,15 +162,6 @@
         }
     });
 
-    function validateEmail(email) {
-        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    function validatePhone(phone) {
-        const re = /^[0-9]{10}$/;
-        return re.test(phone);
-    }
 
 </script>
 

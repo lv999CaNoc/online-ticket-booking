@@ -53,6 +53,7 @@
                         <div class="col-12">
                             <div class="row row--form">
                                 <div class="col-12">
+                                    <span th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}" class="text-danger">Branch error</span>
                                     <select th:field="*{branch}" class="js-example-basic-single" id="branch">
                                         <option value=""></option>
                                         <th:block th:each="branch: ${listBranch}">
@@ -62,10 +63,12 @@
                                 </div>
 
                                 <div class="col-12 col-lg-8">
+                                    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Name error</span>
                                     <input type="text" required th:field="*{name}" class="form__input" placeholder="Room name *">
                                 </div>
 
                                 <div class="col-12 col-lg-4">
+                                    <span th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="text-danger">Capacity error</span>
                                     <select th:field="*{capacity}" class="js-example-basic-single" id="capacity">
                                         <option value=""></option>
                                         <option value="70">70</option>

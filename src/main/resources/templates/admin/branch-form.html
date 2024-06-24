@@ -47,7 +47,7 @@
 
             <!-- form -->
             <div class="col-12">
-                <form th:action="@{/branch/save}" th:method="POST" th:object="${branch}" class="form">
+                <form th:action="@{/branch/save}" th:method="POST" th:object="${branch}" class="form" id="branchForm">
                     <input type="hidden" th:field="*{id}">
                     <div class="row row--form">
                         <div class="col-12">
@@ -56,11 +56,13 @@
                                     <input type="text" required th:field="*{name}" class="form__input" placeholder="Tên rạp *">
                                 </div>
                                 <div class="col-6">
-                                    <input type="number" required th:field="*{phoneNumber}" class="form__input" placeholder="Phone number *">
+                                    <span id="phoneError" class="text-danger" style="display:none;">Số điện thoại không hợp lệ</span>
+                                    <input id="phone" type="text" th:field="*{phoneNumber}" class="form__input" placeholder="Phone number *"
+                                           required minlength="10" maxlength="10">
                                 </div>
 
                                 <div class="col-12 col-lg-3">
-                                    <select th:field="*{thanhPho}" class="js-example-basic-single" id="thanh-pho">
+                                    <select required th:field="*{thanhPho}" class="js-example-basic-single" id="thanh-pho">
                                         <option value=""></option>
                                         <option value="Hà Nội">Hà Nội</option>
                                         <option value="Hồ Chí Minh">Hồ Chí Minh</option>
@@ -68,7 +70,7 @@
                                 </div>
 
                                 <div class="col-9">
-                                    <input type="text" th:field="*{diaChi}" class="form__input" placeholder="Địa chỉ">
+                                    <input type="text" required th:field="*{diaChi}" class="form__input" placeholder="Địa chỉ *">
                                 </div>
 
                                 <div class="col-12 col-lg-3">
@@ -89,9 +91,16 @@
 <!-- end main content -->
 
 <script>
-    function cancelForm(){
-        window.location="/dashboard/management-branch";
+    function cancelForm() {
+        window.location = "/dashboard/management-branch";
     }
+
+    document.getElementById('branchForm').addEventListener('submit', function(event) {
+        if (!validatePhone(document.getElementById('phone').value)) {
+            document.getElementById('phoneError').style.display = 'block';
+            event.preventDefault();
+        }
+    })
 </script>
 
 <!-- JS -->
@@ -104,5 +113,6 @@
 <script src="/js/jquery.mCustomScrollbar.min.js"></script>
 <script src="/js/select2.min.js"></script>
 <script src="/js/admin.js"></script>
+<script src="/js/helper.js"></script>
 </body>
 </html>

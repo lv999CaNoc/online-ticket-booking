@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +36,7 @@ public class ManagerController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/search")
-    public String search(@RequestParam("search") String search, Model model, RedirectAttributes ra) {
+    public String search(@RequestParam("search") String search, Model model) {
         List<Manager> listManager = managerService.findByBranchNameContainingIgnoreCase(search);
         model.addAttribute("listManager", listManager);
         model.addAttribute("pageTitle", "Tìm kiếm quản lý");
@@ -67,7 +69,8 @@ public class ManagerController {
     }
 
     @PostMapping("/save")
-    public String save(Manager manager, RedirectAttributes ra) {
+    public String save(Manager manager, RedirectAttributes ra,
+                       final BindingResult bindingResult, Model model) {
         User user = manager.getUser();
         user.setRole("ROLE_MANAGER");
         user.setPassword(passwordEncoder.encode(user.getPassword()));

@@ -10,15 +10,12 @@ import com.actvn.cinema.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import javax.mail.MessagingException;
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,22 +38,7 @@ public class UserServiceImpl implements UserService {
     private String BASE_URL;
 
     @Override
-    public String login(final Principal principal) {
-        if (principal != null && ((Authentication) principal).isAuthenticated()) {
-            return "forward:/";
-        } else {
-            return "login";
-        }
-    }
-
-    @Override
-    public String register(final Model model) {
-        model.addAttribute("user", new User());
-        return "register";
-    }
-
-    @Override
-    public String registerSuccessfully(final User user, final BindingResult bindingResult) {
+    public String register(final User user, final BindingResult bindingResult) {
         if (userNameExists(user.getUsername())) {
             bindingResult.addError(new FieldError("user", "username", "Username đã tồn tại trong hệ thống. Vui lòng thử lại."));
         }
@@ -65,10 +47,9 @@ public class UserServiceImpl implements UserService {
         }
         if (bindingResult.hasErrors()) {
             return "register";
-        } else {
-            addUser(user);
-            return "redirect:register?success";
         }
+        addUser(user);
+        return "redirect:register?success";
     }
 
     public void addUser(final User user) {

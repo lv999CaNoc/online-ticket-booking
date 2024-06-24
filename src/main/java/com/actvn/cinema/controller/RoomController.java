@@ -3,12 +3,16 @@ package com.actvn.cinema.controller;
 import com.actvn.cinema.exception.RoomNotFoundException;
 import com.actvn.cinema.model.Branch;
 import com.actvn.cinema.model.Room;
+import com.actvn.cinema.repositories.RoomRepository;
 import com.actvn.cinema.service.BranchService;
 import com.actvn.cinema.service.RoomService;
 import com.actvn.cinema.service.SeatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +30,8 @@ public class RoomController {
     private SeatService seatService;
     @Autowired
     private BranchService branchService;
+    @Autowired
+    private RoomRepository roomRepository;
 
     @GetMapping("/search")
     public String search(@RequestParam("search") String search
@@ -69,9 +75,34 @@ public class RoomController {
     }
 
     @PostMapping("/save")
-    public String save(Room room, RedirectAttributes ra){
+    public String save(Room room, RedirectAttributes ra,
+            final BindingResult bindingResult, Model model){
+        if (room.getCapacity()==null){
+            bindingResult.addError(new FieldError("room", "capacity", "Sức chứa không được để trống"));
+        }
+        if (room.getBranch()==null){
+            bindingResult.addError(new FieldError("room", "branch", "Rạp không được để trống"));
+        }
+        Room existedRoom = roomRepository.findRoomByNameContainingIgnoreCase(room.getName()).get(0);
+        if (existedRoom != null){
+            if ( existedRoom.getId() != room.getId() && existedRoom.getBranch() == room.getBranch()){
+                bindingResult.addError(new FieldError("room", "name", room.getName() + " đã tồn tại trong rạp "+ room.getBranch().getName()));
+            }
+        }
+
+        if (bindingResult.hasErrors()){
+            List<Branch> listBranch = branchService.listAll();
+            model.addAttribute("listBranch", listBranch);
+            return "admin/room-form";
+        }
+
+        // update exist room
         roomService.save(room);
-        seatService.initSeat(room);
+        if (room.getId() == null){
+            // create new room
+            seatService.initSeat(room);
+        }
+
         ra.addFlashAttribute("successMessage",
                 room.getName()+" đã lưu thành công.");
         return "redirect:/dashboard/management-room";

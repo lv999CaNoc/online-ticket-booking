@@ -47,7 +47,7 @@
 
             <!-- form -->
             <div class="col-12">
-                <form th:action="@{/movie/save}" th:method="POST" th:object="${movie}" class="form">
+                <form id="movie-form" th:action="@{/movie/save}" th:method="POST" th:object="${movie}" class="form" >
                     <input type="hidden" th:field="*{id}">
                     <div class="row row--form">
                         <div class="col-12 col-md-5 form__cover">
@@ -55,10 +55,12 @@
                                 <div class="col-12 col-sm-6 col-md-12">
                                     <div class="form__img">
                                         <label for="form__img-upload">Upload movie image (270 x 400)</label>
-                                        <input id="form__img-upload" name="form__img-upload" type="file" accept=".png, .jpg, .jpeg">
+                                        <input id="form__img-upload" name="form__img-upload" type="file"
+                                               accept=".png, .jpg, .jpeg">
                                         <img id="form__img" src="#" alt=" ">
                                     </div>
-                                    <input type="text" th:field="*{movieImageURl}" class="form__input" placeholder="Or add a link">
+                                    <input type="text" th:field="*{movieImageURl}" class="form__input"
+                                           placeholder="Or add a link">
                                 </div>
                             </div>
                         </div>
@@ -66,11 +68,15 @@
                         <div class="col-12 col-md-7 form__content">
                             <div class="row row--form">
                                 <div class="col-12">
-                                    <input type="text" required th:field="*{title}" class="form__input" placeholder="Title *">
+                                    <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Username error</span>
+                                    <input type="text" id="title-input" th:field="*{title}" class="form__input"
+                                           placeholder="Title *">
                                 </div>
 
                                 <div class="col-12">
-                                    <textarea id="text" th:field="*{description}" name="text" class="form__textarea" placeholder="Description"></textarea>
+                                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger">Username error</span>
+                                    <textarea id="text" th:field="*{description}" name="text" class="form__textarea"
+                                              placeholder="Description *"></textarea>
                                 </div>
 
                                 <div class="col-12">
@@ -78,24 +84,26 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <input type="text" th:field="*{director}" class="form__input" placeholder="Director">
+                                    <input type="text" th:field="*{director}" class="form__input"
+                                           placeholder="Director">
                                 </div>
 
                                 <div class="col-12 col-lg-6">
                                     <span>Release date *</span>
-                                    <input type="text" required class="form__input" id="releaseDate" autocomplete="off" placeholder="dd/MM/yyyy" th:field="*{releaseDate}"/>
-                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    <input type="text" required class="form__input" id="releaseDate"
+                                           placeholder="dd/MM/yyyy" th:field="*{releaseDate}"/>
                                 </div>
 
                                 <div class="col-12 col-lg-6">
                                     <span>End date *</span>
-                                    <input type="text" required class="form__input" id="endDate" placeholder="dd/MM/yyyy" th:field="*{endDate}"/>
-                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    <input type="text" required class="form__input" id="endDate"
+                                           placeholder="dd/MM/yyyy" th:field="*{endDate}"/>
                                 </div>
 
 
                                 <div class="col-12 col-lg-6">
-                                    <input type="text" th:field="*{duration}" class="form__input" placeholder="Duration">
+                                    <input type="text" th:field="*{duration}" class="form__input" id="duration" required
+                                           placeholder="Duration *">
                                 </div>
 
                                 <div class="col-12 col-lg-6">
@@ -118,21 +126,27 @@
                                 <div class="col-12">
                                     <div class="form__gallery">
                                         <label id="gallery1" for="form__gallery-upload">Upload banner image</label>
-                                        <input data-name="#gallery1" id="form__gallery-upload" name="gallery" class="form__gallery-upload" type="file" accept=".png, .jpg, .jpeg" multiple>
+                                        <input data-name="#gallery1" id="form__gallery-upload" name="gallery"
+                                               class="form__gallery-upload" type="file" accept=".png, .jpg, .jpeg"
+                                               multiple>
                                     </div>
-                                    <input type="text" th:field="*{bannerImageURl}" class="form__input" placeholder="Or add a link">
+                                    <input type="text" th:field="*{bannerImageURl}" class="form__input"
+                                           placeholder="Or add a link">
                                 </div>
 
                                 <div class="col-12 ">
                                     <div class="form__video">
                                         <label id="movie1" for="form__video-upload">Upload trailer video</label>
-                                        <input data-name="#movie1" id="form__video-upload" name="movie" class="form__video-upload" type="file" accept="video/mp4,video/x-m4v,video/*">
+                                        <input data-name="#movie1" id="form__video-upload" name="movie"
+                                               class="form__video-upload" type="file"
+                                               accept="video/mp4,video/x-m4v,video/*">
                                     </div>
-                                    <input type="text" th:field="*{trailerURL}" class="form__input" placeholder="Or add a link">
+                                    <input type="text" th:field="*{trailerURL}" class="form__input"
+                                           placeholder="Or add a link">
                                 </div>
 
                                 <div class="col-12 col-lg-3">
-                                    <button type="submit" class="form__btn">Submit</button>
+                                    <button onclick="submitForm()" type="button" class="form__btn">Submit</button>
                                 </div>
                                 <div class="col-12 col-lg-3">
                                     <button onclick="cancelForm()" type="button" class="form__btn">cancel</button>
@@ -149,8 +163,73 @@
 <!-- end main content -->
 
 <script>
-    function cancelForm(){
-        window.location="/dashboard/management-movie";
+    function cancelForm() {
+        window.location = "/dashboard/management-movie";
+    }
+
+    function submitForm() {
+        if (validationInput()){
+            document.getElementById("movie-form").submit();
+        }
+    }
+
+    function validationInput() {
+        let releaseDateInput = document.getElementById("releaseDate");
+        let endDateInput = document.getElementById("endDate");
+        let rd = validateDate(releaseDateInput.value);
+        let ed = validateDate(endDateInput.value)
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        var selectedCategories = $('#categories').val();
+        var duration =  $('#duration').val();
+        var rated =  $('#rated').val();
+        var description = $('#text').val();
+        var title = $('#title-input').val();
+
+        if (title.trim().length === 0){
+            alert("Truờng tiêu đề không hợp lệ.")
+            return false;
+        }
+        if (description.trim().length === 0){
+            alert("Mô tả phim không hợp lệ.")
+            return false;
+        }
+
+        if (!rated || rated.length === 0) {
+            alert("Chọn giới hạn độ tuổi.");
+            return false;
+        }
+        // no categories
+        if (!selectedCategories || selectedCategories.length === 0) {
+            alert("Chọn ít nhất 1 thể loại.");
+            return false;
+        }
+
+        if (isNaN(duration)){
+            alert("Truờng Duration không hợp lệ.");
+            return false;
+        }
+
+        if (rd !== null && ed !== null) {
+            // rd before now? -> alert
+            if (rd < currentDate) {
+                alert("Nhập Realease date chưa hợp lệ")
+                return false;
+            }
+
+            // ed before rd || ed before now? -> alert
+            if (ed < rd || ed < currentDate) {
+                alert("Nhập End date chưa hợp lệ")
+                return false;
+            }
+
+            return true;
+        } else {
+            // error format
+            alert("Nhập Release date hoặc End date chưa hợp lệ")
+            return false;
+        }
     }
 </script>
 
@@ -164,5 +243,6 @@
 <script src="/js/jquery.mCustomScrollbar.min.js"></script>
 <script src="/js/select2.min.js"></script>
 <script src="/js/admin.js"></script>
+<script src="/js/helper.js"></script>
 </body>
 </html>

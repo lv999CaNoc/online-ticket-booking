@@ -10,11 +10,7 @@ import java.util.List;
 
 public interface UserService {
 
-    String login(final Principal principal);
-
-    String register(final Model model);
-
-    String registerSuccessfully(final User user, final BindingResult bindingResult);
+    String register(final User user, final BindingResult bindingResult);
 
     String verifyEmail(String value);
 

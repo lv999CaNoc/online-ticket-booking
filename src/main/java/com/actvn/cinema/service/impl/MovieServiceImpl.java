@@ -26,8 +26,6 @@ public class MovieServiceImpl implements MovieService {
     private CategoryRepository categoryRepository;
     @Autowired
     private TicketRepository ticketRepository;
-    @Autowired
-    private BillRepository billRepository;
 
     @Override
     public List<Movie> listAllMovie() {

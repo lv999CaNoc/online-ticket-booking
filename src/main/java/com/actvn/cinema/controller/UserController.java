@@ -6,6 +6,7 @@ import com.actvn.cinema.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,18 +27,23 @@ public class UserController {
 
     @GetMapping("/login")
     public String login(final Principal principal){
-        return userService.login(principal);
+        if (principal != null && ((Authentication) principal).isAuthenticated()) {
+            return "forward:/";
+        } else {
+            return "login";
+        }
     }
 
     @GetMapping("/register")
-    public String register(@ModelAttribute final User user, final Model model) {
-        return userService.register(model);
+    public String registerPage(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
     }
 
     @PostMapping("/register")
-    public String registerOk(@Valid @ModelAttribute("user") final User user,
+    public String register(@Valid @ModelAttribute("user") final User user,
                              final BindingResult bindingResult) {
-        return userService.registerSuccessfully(user, bindingResult);
+        return userService.register(user, bindingResult);
     }
 
     @GetMapping("/verify")

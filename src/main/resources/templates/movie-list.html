@@ -125,7 +125,7 @@
         <div class="tab-item active">
           <form class="ticket-search-form" th:action="@{/movie/search-advantage}" method="get">
             <div class="form-group large">
-              <input name="search" type="text" placeholder="Tìm kiếm phim theo tên phim, đạo diễn, diễn viên...">
+              <input name="search" type="text" placeholder="Tìm kiếm phim theo tên phim, đạo diễn, diễn viên..." required maxlength="60">
               <button type="submit"><i class="fas fa-search"></i></button>
             </div>
           </form>
