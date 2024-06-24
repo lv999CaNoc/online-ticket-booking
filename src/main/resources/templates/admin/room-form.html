@@ -45,6 +45,15 @@
             </div>
             <!-- end main title -->
 
+            <!--message-->
+            <div class="col-12">
+                <div class="main__table-message">
+                    <div th:if="${successMessage}" class="text-center alert alert-success">[[${successMessage}]]</div>
+                    <div th:if="${errorMessage}" class="text-center alert alert-danger">[[${errorMessage}]]</div>
+                </div>
+            </div>
+            <!--message-->
+
             <!-- form -->
             <div class="col-12">
                 <form th:action="@{/room/save}" th:method="POST" th:object="${room}" class="form">
@@ -53,8 +62,8 @@
                         <div class="col-12">
                             <div class="row row--form">
                                 <div class="col-12">
-                                    <span th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}" class="text-danger">Branch error</span>
-                                    <select th:field="*{branch}" class="js-example-basic-single" id="branch">
+                                    <div th:if="${errorBranchEmpty}" class="text-center alert alert-danger">[[${errorBranchEmpty}]]</div>
+                                    <select th:field="*{branch}" class="js-example-basic-single" id="branch" placeholder="Branch *">
                                         <option value=""></option>
                                         <th:block th:each="branch: ${listBranch}">
                                             <option th:value="${branch.id}">[[${branch.name}]]</option>
@@ -63,12 +72,10 @@
                                 </div>
 
                                 <div class="col-12 col-lg-8">
-                                    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Name error</span>
                                     <input type="text" required th:field="*{name}" class="form__input" placeholder="Room name *">
                                 </div>
 
                                 <div class="col-12 col-lg-4">
-                                    <span th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="text-danger">Capacity error</span>
                                     <select th:field="*{capacity}" class="js-example-basic-single" id="capacity">
                                         <option value=""></option>
                                         <option value="70">70</option>

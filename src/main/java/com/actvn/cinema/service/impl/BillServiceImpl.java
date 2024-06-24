@@ -1,7 +1,7 @@
 package com.actvn.cinema.service.impl;
 
 import com.actvn.cinema.DTO.BookingRequestDTO;
-import com.actvn.cinema.exception.BillNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Bill;
 import com.actvn.cinema.model.Schedule;
 import com.actvn.cinema.model.Ticket;
@@ -12,7 +12,6 @@ import com.actvn.cinema.service.ImgbbService;
 import com.actvn.cinema.service.QRCodeService;
 import com.google.zxing.WriterException;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,16 +91,15 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public Bill getBillById(Integer id) throws BillNotFoundException {
+    public Bill getBillById(Integer id) throws NotFoundException {
         Optional<Bill> result = billRepository.findById(id);
         if (result.isPresent()) return result.get();
-        throw new BillNotFoundException("Không tìm bill với id = " + id);
+
+        throw new NotFoundException("Không tìm bill với id: " + id);
     }
 
     @Override
     public Long countBillOfMonth() {
         return billRepository.countOfMonth();
     }
-
-
 }

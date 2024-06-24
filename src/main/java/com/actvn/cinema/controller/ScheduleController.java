@@ -2,8 +2,7 @@ package com.actvn.cinema.controller;
 
 import com.actvn.cinema.DTO.ResponseSearchScheduleDTO;
 import com.actvn.cinema.DTO.SearchScheduleDTO;
-import com.actvn.cinema.exception.BranchNotFoundException;
-import com.actvn.cinema.exception.ScheduleNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Branch;
 import com.actvn.cinema.model.Movie;
 import com.actvn.cinema.model.Room;
@@ -38,9 +37,14 @@ public class ScheduleController {
     private MovieService movieService;
 
     @GetMapping("/search")
-    public String search(@RequestParam("search") @DateTimeFormat(pattern = "dd/MM/yyyy") Date searchDate, Model model) {
-        List<Schedule> schedules = scheduleService.findScheduleByStartDate(searchDate);
-        model.addAttribute("schedules", schedules);
+    public String search(@RequestParam("search") @DateTimeFormat(pattern = "dd/MM/yyyy") Date searchDate,
+                         Model model) {
+        try {
+            List<Schedule> schedules = scheduleService.findScheduleByStartDate(searchDate);
+            model.addAttribute("schedules", schedules);
+        } catch (NotFoundException e) {
+            model.addAttribute("errorEmpty", e.getMessage());
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         model.addAttribute("pageTitle", formatter.format(searchDate));
@@ -48,7 +52,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/new")
-    public String add(Model model, RedirectAttributes ra) {
+    public String showNewForm(Model model, RedirectAttributes ra) {
         try {
             Branch branch = branchService.get(1);
             List<Room> listRoom = roomService.getRoomByBranchId(branch.getId());
@@ -57,13 +61,11 @@ public class ScheduleController {
             model.addAttribute("branch", branch);
             model.addAttribute("listRoom", listRoom);
             model.addAttribute("listMovie", listMovie);
-
             model.addAttribute("schedule", new Schedule());
-
             model.addAttribute("pageTitle", "Thêm lịch chiếu mới");
             return "admin/schedule-form";
-        } catch (BranchNotFoundException branchNotFoundException) {
-            ra.addFlashAttribute("errorMessage", "Là quản lý rạp mới có quyền thêm lịch chiếu.");
+        } catch (NotFoundException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/dashboard/management-schedule";
         }
     }
@@ -86,16 +88,20 @@ public class ScheduleController {
 
             model.addAttribute("pageTitle", "Cập nhật lịch chiếu");
             return "admin/schedule-form";
-        } catch (ScheduleNotFoundException scheduleNotFoundException) {
-            ra.addFlashAttribute("errorMessage", scheduleNotFoundException.getMessage());
+        } catch (NotFoundException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/dashboard/management-schedule";
         }
     }
 
     @PostMapping("/save")
     public String save(Schedule schedule, RedirectAttributes ra) {
-        scheduleService.save(schedule);
-        ra.addFlashAttribute("successMessage", "Lưu lịch chiếu thành công.");
+        try {
+            scheduleService.save(schedule);
+            ra.addFlashAttribute("successMessage", "Lưu lịch chiếu thành công.");
+        } catch (IllegalArgumentException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/dashboard/management-schedule";
     }
 
@@ -104,8 +110,8 @@ public class ScheduleController {
         try {
             scheduleService.delete(id);
             ra.addFlashAttribute("successMessage", "Xóa lịch chiếu thành công.");
-        } catch (ScheduleNotFoundException scheduleNotFoundException) {
-            ra.addFlashAttribute("errorMessage", scheduleNotFoundException.getMessage());
+        } catch (NotFoundException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/dashboard/management-schedule";
     }
@@ -113,7 +119,7 @@ public class ScheduleController {
     @PostMapping("/loadData")
     @ResponseBody
     public String loadData(@RequestBody SearchScheduleDTO search) throws JsonProcessingException {
-        List<ResponseSearchScheduleDTO> response = scheduleService.getSchedule(search);
+        List<ResponseSearchScheduleDTO> response = scheduleService.search(search);
         // Chuyển danh sách thành JSON
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(response);

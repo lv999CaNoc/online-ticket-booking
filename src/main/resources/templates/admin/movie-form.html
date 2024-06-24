@@ -45,6 +45,15 @@
             </div>
             <!-- end main title -->
 
+            <!--message-->
+            <div class="col-12">
+                <div class="main__table-message">
+                    <div th:if="${successMessage}" class="text-center alert alert-success">[[${successMessage}]]</div>
+                    <div th:if="${errorMessage}" class="text-center alert alert-danger">[[${errorMessage}]]</div>
+                </div>
+            </div>
+            <!--message-->
+
             <!-- form -->
             <div class="col-12">
                 <form id="movie-form" th:action="@{/movie/save}" th:method="POST" th:object="${movie}" class="form" >
@@ -68,13 +77,11 @@
                         <div class="col-12 col-md-7 form__content">
                             <div class="row row--form">
                                 <div class="col-12">
-                                    <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Username error</span>
                                     <input type="text" id="title-input" th:field="*{title}" class="form__input"
                                            placeholder="Title *">
                                 </div>
 
                                 <div class="col-12">
-                                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger">Username error</span>
                                     <textarea id="text" th:field="*{description}" name="text" class="form__textarea"
                                               placeholder="Description *"></textarea>
                                 </div>
@@ -107,6 +114,7 @@
                                 </div>
 
                                 <div class="col-12 col-lg-6">
+
                                     <select th:field="*{rated}" class="js-example-basic-single" id="rated">
                                         <option value=""></option>
                                         <th:block th:each="rated: ${listRated}">
@@ -116,6 +124,7 @@
                                 </div>
 
                                 <div class="col-12">
+                                    <div th:if="${listCategoriesEmpty}" class="text-center alert alert-danger">[[${listCategoriesEmpty}]]</div>
                                     <select id="categories" name="categories" class="js-example-basic-multiple" multiple="multiple">
                                         <th:block th:each="cate: ${listCategories}">
                                             <option th:value="${cate.id}">[[${cate.name}]]</option>

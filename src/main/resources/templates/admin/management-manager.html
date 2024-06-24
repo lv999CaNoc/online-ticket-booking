@@ -41,7 +41,9 @@
                 <div class="main__title">
                     <h2>[[${pageTitle}]]</h2>
 
-                    <span class="main__title-stat">[[${listManager.size()}]] user</span>
+                    <span th:if="${listManager}" class="main__title-stat">[[${listManager.size()}]] user</span>
+                    <span th:else class="main__title-stat">0 user</span>
+
                     <a class="main__title-link" style="margin-left: auto;" href="/manager/new">Thêm manager</a>
                     <div class="main__title-wrap">
                         <!-- filter sort -->
@@ -99,6 +101,7 @@
                         </thead>
 
                         <tbody>
+                        <div th:if="${errorEmpty}" class="text-center alert alert-danger">[[${errorEmpty}]]</div>
                         <th:block th:each="manager: ${listManager}">
                             <tr>
                                 <td>
@@ -153,7 +156,8 @@
             <!-- paginator -->
             <div class="col-12">
                 <div class="paginator-wrap">
-                    <span>[[${listManager.size()}]] from 10</span>
+                    <span th:if="${listManager}">[[${listManager.size()}]] from 10</span>
+                    <span th:else>0 from 20</span>
 
                     <ul class="paginator">
                         <li class="paginator__item paginator__item--prev">

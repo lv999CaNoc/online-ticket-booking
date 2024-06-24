@@ -34,16 +34,14 @@
                     <h2 class="title">welcome </h2>
                 </div>
                 <div th:if="${param.success}" class="alert text-center text-success">Đăng ký thành công. Vui lòng kiểm tra địa chỉ email để kích hoạt tài khoản của bạn.</div>
+                <div th:if="${error}" class="alert text-center text-danger">[[${error}]]</div>
 
                 <form id="registrationForm" class="account-form" th:object="${user}" th:action="@{/register}" method="post">
-
-                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger">Email error</span>
                     <span id="emailError" class="text-danger" style="display:none;">Email không hợp lệ</span>
                     <div class="form-group">
                         <input type="email" name="email" th:field="*{email}" placeholder="Enter Your Email" id="email1" required>
                     </div>
 
-                    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger">Username error</span>
                     <div class="form-group">
                         <input type="text" name="username" th:field="*{username}" placeholder="Enter Username" id="username"
                                required minlength="4" maxlength="60">

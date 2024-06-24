@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Table(name="room")
@@ -19,6 +20,8 @@ public class Room {
 
     @NotBlank(message = "Tên phòng không được để trống")
     private String name;
+
+    @NotNull(message = "Sức chứa không được để trống")
     private Integer capacity;
 
     @ManyToOne

@@ -1,29 +1,29 @@
 package com.actvn.cinema.service;
 
 import com.actvn.cinema.DTO.SearchMovieDTO;
-import com.actvn.cinema.exception.MovieNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Movie;
 
 import java.util.List;
 
 public interface MovieService {
-    List<Movie> listAllMovie();
+    List<Movie> listAllMovie() throws NotFoundException;
 
-    Movie save(Movie movie);
+    Movie save(Movie movie) throws IllegalArgumentException;
 
-    List<Movie> listMovieNowShowing();
+    List<Movie> listMovieNowShowing() throws NotFoundException;
 
-    List<Movie> listMovieComingSoon();
+    List<Movie> listMovieComingSoon() throws NotFoundException;
 
-    Movie getMovieById(Integer id) throws MovieNotFoundException;
+    Movie getMovieById(Integer id) throws NotFoundException;
 
-    List<Movie> listMovieAdvantage(String search) throws MovieNotFoundException;
+    List<Movie> search(String search) throws NotFoundException;
 
-    void deleteById(Integer id) throws MovieNotFoundException;
+    void deleteById(Integer id) throws NotFoundException;
 
-    List<Movie> listTop3ByOrderByLikePercentageDesc();
+    List<Movie> listTop3ByOrderByLikePercentageDesc() throws NotFoundException;
 
-    List<Movie> filterMovie(SearchMovieDTO searchMovieDTO) throws MovieNotFoundException;
+    List<Movie> filterMovie(SearchMovieDTO searchMovieDTO) throws NotFoundException;
 
-    List<Movie> recommendMoviesForUser(Long userId) throws MovieNotFoundException;
+    List<Movie> recommendMoviesForUser(Long userId) throws NotFoundException;
 }

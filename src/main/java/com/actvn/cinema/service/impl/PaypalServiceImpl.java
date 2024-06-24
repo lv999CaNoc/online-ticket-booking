@@ -4,6 +4,8 @@ import com.actvn.cinema.service.PaypalService;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 public class PaypalServiceImpl implements PaypalService {
+    private static final Logger log = LoggerFactory.getLogger(PaypalServiceImpl.class);
     @Autowired
     private APIContext apiContext;
 
@@ -23,8 +26,11 @@ public class PaypalServiceImpl implements PaypalService {
         payment.setId(paymentId);
         PaymentExecution paymentExecute = new PaymentExecution();
         paymentExecute.setPayerId(payerId);
+
+        log.info("[LOG] Execute payment successfully");
         return payment.execute(apiContext, paymentExecute);
     }
+
     @Override
     public Payment createPayment(
             Double total,
@@ -33,7 +39,7 @@ public class PaypalServiceImpl implements PaypalService {
             String intent,
             String description,
             String cancelUrl,
-            String successUrl) throws PayPalRESTException{
+            String successUrl) throws PayPalRESTException {
         Amount amount = new Amount();
         amount.setCurrency(currency);
         total = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).doubleValue();
@@ -47,17 +53,17 @@ public class PaypalServiceImpl implements PaypalService {
         transactions.add(transaction);
 
         Payer payer = new Payer();
-        payer.setPaymentMethod(method.toString());
+        payer.setPaymentMethod(method);
 
         Payment payment = new Payment();
-        payment.setIntent(intent.toString());
+        payment.setIntent(intent);
         payment.setPayer(payer);
         payment.setTransactions(transactions);
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setCancelUrl(cancelUrl);
         redirectUrls.setReturnUrl(successUrl);
         payment.setRedirectUrls(redirectUrls);
-
+        log.info("[LOG] Create payment successfully");
         return payment.create(apiContext);
     }
 }

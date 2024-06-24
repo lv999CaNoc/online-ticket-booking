@@ -1,11 +1,13 @@
 package com.actvn.cinema.service;
 
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Ticket;
 
 import java.util.List;
 
 public interface TicketService {
-    List<Ticket> getTicketsByUserId(Long userId);
+//    TODO: delete
+//    List<Ticket> getTicketsByUserId(Long userId) throws NotFoundException;
 
-    List<Ticket> getTicketsByBillId(Integer billId);
+    List<Ticket> getTicketsByBillId(Integer billId) throws NotFoundException;
 }

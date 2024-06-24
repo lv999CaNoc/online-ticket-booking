@@ -21,7 +21,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     List<Movie> findTop3ByOrderByLikePercentageDesc();
 
     @Query("SELECT m FROM Movie m WHERE LOWER(CONCAT(m.title,' ',m.actors,' ',m.director)) LIKE CONCAT('%', LOWER(?1), '%')")
-    List<Movie> searchAdvantage(String keyword);
+    List<Movie> search(String keyword);
 
     @Query("SELECT DISTINCT m FROM Movie m JOIN m.categories c WHERE c.id IN :categories " +
             "AND m.rated IN (:rateOptions) " +

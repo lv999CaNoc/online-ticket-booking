@@ -41,7 +41,8 @@
                 <div class="main__title">
                     <h2>[[${pageTitle}]]</h2>
 
-                    <span class="main__title-stat">[[${branches.size()}]] Rạp</span>
+                    <span th:if="${branches}" class="main__title-stat">[[${branches.size()}]] Rạp</span>
+                    <span th:else class="main__title-stat">0 Rạp</span>
                     <a class="main__title-link" style="margin-left: auto;" href="/branch/new">Thêm rạp</a>
                     <div class="main__title-wrap">
                         <div class="filter" id="filter__sort">
@@ -96,6 +97,7 @@
                         </thead>
 
                         <tbody>
+                        <div th:if="${errorEmpty}" class="text-center alert alert-danger">[[${errorEmpty}]]</div>
                         <th:block th:each="branch: ${branches}">
                             <tr>
                                 <td>
@@ -131,7 +133,8 @@
             <!-- paginator -->
             <div class="col-12">
                 <div class="paginator-wrap">
-                    <span>[[${branches.size()}]] from 10</span>
+                    <span th:if="${branches}">[[${branches.size()}]] from 20</span>
+                    <span th:else>0 from 20</span>
 
                     <ul class="paginator">
                         <li class="paginator__item paginator__item--prev">

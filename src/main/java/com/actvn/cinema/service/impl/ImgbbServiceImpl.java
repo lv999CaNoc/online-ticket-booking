@@ -21,6 +21,7 @@ public class ImgbbServiceImpl implements ImgbbService {
 
     @Value("${imgbb.base-upload-url}")
     private String BASE_UPLOAD_URL;
+
     @Override
     public HttpResponse<String> upload(byte[] imageBytes) throws IOException, InterruptedException {
         // Chuyển đổi dữ liệu nhị phân của hình ảnh thành dữ liệu Base64

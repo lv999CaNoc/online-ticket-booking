@@ -41,7 +41,9 @@
                 <div class="main__title">
                     <h2>[[${pageTitle}]]</h2>
 
-                    <span class="main__title-stat">[[${movies.size()}]] Phim</span>
+                    <span th:if="${movies}" class="main__title-stat">[[${movies.size()}]] Phim</span>
+                    <span th:else class="main__title-stat">0 Phim</span>
+
                     <a class="main__title-link" style="margin-left: auto;" href="/movie/new">Thêm phim</a>
                     <div class="main__title-wrap">
                         <!-- filter sort -->
@@ -102,6 +104,7 @@
                         </thead>
 
                         <tbody>
+                        <div th:if="${errorEmpty}" class="text-center alert alert-danger">[[${errorEmpty}]]</div>
                         <th:block th:each="movie: ${movies}">
                             <tr>
                                 <td>
@@ -147,7 +150,9 @@
             <!-- paginator -->
             <div class="col-12">
                 <div class="paginator-wrap">
-                    <span>[[${movies.size()}]] from 10</span>
+
+                    <span th:if="${movies}">[[${movies.size()}]] from 20</span>
+                    <span th:else>0 from 20</span>
 
                     <ul class="paginator">
                         <li class="paginator__item paginator__item--prev">

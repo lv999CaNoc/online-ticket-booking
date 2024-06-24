@@ -1,7 +1,7 @@
 package com.actvn.cinema.controller;
 
 import com.actvn.cinema.DTO.SearchScheduleDTO;
-import com.actvn.cinema.exception.MovieNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Branch;
 import com.actvn.cinema.model.Movie;
 import com.actvn.cinema.model.Ticket;
@@ -26,26 +26,29 @@ import java.util.List;
 @Controller
 @RequestMapping("/ticket")
 public class TicketController {
-    @Autowired private TicketRepository ticketRepository;
-    @Autowired private MovieService movieService;
-    @Autowired private BranchService branchService;
+    @Autowired
+    private TicketRepository ticketRepository;
+    @Autowired
+    private MovieService movieService;
+    @Autowired
+    private BranchService branchService;
 
     @GetMapping("/plan")
-    public String getMovieTicketPlan(@RequestParam("mid") Integer movieId, Model model){
+    public String getMovieTicketPlan(@RequestParam("mid") Integer movieId, Model model) {
         try {
             Movie movie = movieService.getMovieById(movieId);
-            List<Branch> listBranch = branchService.listAll();
-            List<String> dates = get7Date();
-
-
             model.addAttribute("movie", movie);
+            List<Branch> listBranch = branchService.listAll();
             model.addAttribute("listBranch", listBranch);
-            model.addAttribute("dates", dates);
-
-            model.addAttribute("searchSchedule", new SearchScheduleDTO());
-        } catch (MovieNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (NotFoundException e) {
+            System.err.println(e.getMessage());
+            model.addAttribute("notFound", e.getMessage());
+            return "error/404";
         }
+
+        List<String> dates = get7Date();
+        model.addAttribute("dates", dates);
+        model.addAttribute("searchSchedule", new SearchScheduleDTO());
         return "ticket-plan";
     }
 
@@ -63,17 +66,16 @@ public class TicketController {
     }
 
     @GetMapping("/history")
-    public String bookingHistory(Model model){
+    public String bookingHistory(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.isAuthenticated()){
+        if (authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof User) {
-                User user = (User) principal;
+            if (principal instanceof User user) {
                 List<Ticket> ticketsByUserId = ticketRepository.findTicketsByUserId(user.getId());
-                model.addAttribute("tickets",ticketsByUserId);
+                model.addAttribute("tickets", ticketsByUserId);
             }
         }
-        model.addAttribute("pageTitle","Lịch sử mua vé");
+        model.addAttribute("pageTitle", "Lịch sử mua vé");
         return "booking-history";
     }
 }

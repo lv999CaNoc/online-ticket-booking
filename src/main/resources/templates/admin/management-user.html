@@ -41,7 +41,9 @@
                 <div class="main__title">
                     <h2>[[${pageTitle}]]</h2>
 
-                    <span class="main__title-stat">[[${listUser.size()}]] user</span>
+                    <span th:if="${listUser}" class="main__title-stat">[[${listUser.size()}]] user</span>
+                    <span th:else class="main__title-stat">0 user</span>
+
                     <div class="main__title-wrap">
                         <!-- filter sort -->
                         <div class="filter" id="filter__sort">
@@ -82,6 +84,7 @@
 
             <!-- dashbox -->
             <div class="col-12">
+                <div th:if="${listUserEmpty}" class="text-center alert alert-danger">[[${listUserEmpty}]]</div>
                 <div class="main__table-wrap">
                     <table class="main__table">
                         <thead>
@@ -148,7 +151,8 @@
             <!-- paginator -->
             <div class="col-12">
                 <div class="paginator-wrap">
-                    <span>[[${listUser.size()}]] from 10</span>
+                    <span th:if="${listUser}">[[${listUser.size()}]] from 20</span>
+                    <span th:unless="${listUser}">0 from 20</span>
 
                     <ul class="paginator">
                         <li class="paginator__item paginator__item--prev">

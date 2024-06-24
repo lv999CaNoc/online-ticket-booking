@@ -2,7 +2,7 @@ package com.actvn.cinema.controller;
 
 import com.actvn.cinema.DTO.ResponseSearchMovieDTO;
 import com.actvn.cinema.DTO.SearchMovieDTO;
-import com.actvn.cinema.exception.MovieNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Category;
 import com.actvn.cinema.model.Movie;
 import com.actvn.cinema.model.Rated;
@@ -10,10 +10,9 @@ import com.actvn.cinema.service.CategoryService;
 import com.actvn.cinema.service.MovieService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,76 +23,83 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/movie")
+@AllArgsConstructor
 public class MovieController {
 
-    @Autowired private MovieService movieService;
-    @Autowired private CategoryService categoryService;
+    private MovieService movieService;
+    private CategoryService categoryService;
 
     @GetMapping("/details")
-    public String getMovieDetails(@RequestParam("mid") Integer mId,
-                                  Model model, RedirectAttributes ra){
+    public String getMovieDetails(@RequestParam("mid") Integer mId, Model model) {
         try {
             Movie movie = movieService.getMovieById(mId);
             model.addAttribute("movie", movie);
-            model.addAttribute("pageTitle", "Phim "+ movie.getTitle());
+            model.addAttribute("pageTitle", "Phim " + movie.getTitle());
             return "movie-details";
-        } catch (MovieNotFoundException e) {
-            ra.addFlashAttribute("message", e.getMessage());
-            return "redirect:/movie";
+        } catch (NotFoundException e) {
+            model.addAttribute("notFound", e.getMessage());
+            return "error/404";
         }
     }
 
     @RequestMapping("/list")
-    public String getPageMovieList(Model model){
-        List<Movie> listMovieNowShowing = movieService.listMovieNowShowing();
-        Rated[] listRated = Rated.values();
-        List<Category> listCategories = categoryService.getAll();
+    public String getPageMovieList(Model model) {
+        try {
+            List<Movie> listMovieNowShowing = movieService.listMovieNowShowing();
+            model.addAttribute("movies", listMovieNowShowing);
+        } catch (NotFoundException e) {
+            model.addAttribute("notFoundMovie", e.getMessage());
+        }
 
-        model.addAttribute("movies", listMovieNowShowing);
+        Rated[] listRated = Rated.values();
         model.addAttribute("listRated", listRated);
-        model.addAttribute("listCategories", listCategories);
+
+        try {
+            List<Category> listCategories = categoryService.getAll();
+            model.addAttribute("listCategories", listCategories);
+        } catch (NotFoundException e) {
+            model.addAttribute("errorCategoryEmpty", e.getMessage());
+        }
+
         return "movie-list";
     }
-    @GetMapping("/search-advantage")
-    public String loadMovieAdvantage(@RequestParam("search") String search
-                    , Model model) {
-        Rated[] listRated = Rated.values();
-        List<Category> listCategories = categoryService.getAll();
 
+    @GetMapping("/search-advantage")
+    public String searchMovie(@RequestParam("search") String search, Model model) {
+        Rated[] listRated = Rated.values();
         model.addAttribute("listRated", listRated);
-        model.addAttribute("listCategories", listCategories);
-        List<Movie> movies;
+
         try {
-            movies = movieService.listMovieAdvantage(search);
+            List<Category> listCategories = categoryService.getAll();
+            model.addAttribute("listCategories", listCategories);
+        } catch (NotFoundException e) {
+            model.addAttribute("errorCategoryEmpty", e.getMessage());
+        }
+
+        try {
+            List<Movie> movies = movieService.search(search);
             model.addAttribute("movies", movies);
-        }catch (MovieNotFoundException movieNotFoundException){
-            model.addAttribute("error",movieNotFoundException.getMessage());
+        } catch (NotFoundException e) {
+            model.addAttribute("notFoundMovie", e.getMessage());
         }
         return "movie-list";
     }
 
     @PostMapping("/filter-movie")
     @ResponseBody
-    public String filterMovie(@RequestBody SearchMovieDTO searchMovieDTO){
-        List<ResponseSearchMovieDTO> movies=new ArrayList<>();
+    public String filterMovie(@RequestBody SearchMovieDTO searchMovieDTO) {
+        List<ResponseSearchMovieDTO> movies = new ArrayList<>();
         try {
-            for (Movie movie: movieService.filterMovie(searchMovieDTO)){
-                System.out.println(movie.getId());
-                ResponseSearchMovieDTO responseSearchMovieDTO = new ResponseSearchMovieDTO();
-                responseSearchMovieDTO.setId(movie.getId());
-                responseSearchMovieDTO.setTitle(movie.getTitle());
-                responseSearchMovieDTO.setCategories(movie.getCategories());
-                responseSearchMovieDTO.setDescription(movie.getDescription());
-                responseSearchMovieDTO.setDuration(movie.getDuration());
-                responseSearchMovieDTO.setFormattedReleaseDate(movie.getFormattedReleaseDate());
-                responseSearchMovieDTO.setRatedDescription(movie.getRated().getDescription());
-                responseSearchMovieDTO.setLikePercentage(movie.getLikePercentage());
-                responseSearchMovieDTO.setRevenuePercentage(movie.getRevenuePercentage());
-                responseSearchMovieDTO.setTrailerURL(movie.getTrailerURL());
-                responseSearchMovieDTO.setMovieImageURl(movie.getMovieImageURl());
+            for (Movie movie : movieService.filterMovie(searchMovieDTO)) {
+                ResponseSearchMovieDTO responseSearchMovieDTO = new ResponseSearchMovieDTO(
+                        movie.getId(), movie.getTitle(), movie.getCategories(), movie.getDescription(),
+                        movie.getDuration(), movie.getFormattedReleaseDate(), movie.getRated().getDescription(),
+                        movie.getLikePercentage(), movie.getRevenuePercentage(), movie.getTrailerURL(), movie.getMovieImageURl()
+                );
                 movies.add(responseSearchMovieDTO);
             }
-        } catch (MovieNotFoundException e) {
+        } catch (NotFoundException e) {
+            // Giấu bug =)))
         }
         // Chuyển danh sách thành JSON
         ObjectMapper mapper = new ObjectMapper();
@@ -101,38 +107,44 @@ public class MovieController {
         try {
             json = mapper.writeValueAsString(movies);
         } catch (JsonProcessingException e) {
+            // Giấu bug =)))
         }
         return json;
     }
 
+    // For manager & admin
     @GetMapping("/search")
     public String searchMovieAdmin(@RequestParam("search") String search
-            , Model model) throws MovieNotFoundException {
-        try{
-            List<Movie> movies = movieService.listMovieAdvantage(search);
+            , Model model) {
+        try {
+            List<Movie> movies = movieService.search(search);
             model.addAttribute("movies", movies);
-        }catch (MovieNotFoundException movieNotFoundException){
-            model.addAttribute("errorMessage", movieNotFoundException.getMessage());
+        } catch (NotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
         }
         return "admin/management-movie";
     }
 
     @GetMapping("/new")
-    public String showNewForm(Model model){
-        List<Category> listCategories = categoryService.getAll();
+    public String showNewForm(Model model) {
+        try {
+            List<Category> listCategories = categoryService.getAll();
+            model.addAttribute("listCategories", listCategories);
+        } catch (NotFoundException e) {
+            model.addAttribute("listCategoriesEmpty", e.getMessage());
+        }
+
         Rated[] listRated = Rated.values();
 
         model.addAttribute("movie", new Movie());
         model.addAttribute("listRated", listRated);
-        model.addAttribute("listCategories", listCategories);
         model.addAttribute("pageTitle", "Thêm phim mới");
 
         return "admin/movie-form";
     }
 
     @GetMapping("/edit")
-    public String showEditForm(@RequestParam("id") Integer id,
-                               Model model, RedirectAttributes ra){
+    public String showEditForm(@RequestParam("id") Integer id, Model model, RedirectAttributes ra) {
         try {
             Movie movie = movieService.getMovieById(id);
             model.addAttribute("movie", movie);
@@ -144,41 +156,38 @@ public class MovieController {
             model.addAttribute("listCategories", listCategories);
             model.addAttribute("pageTitle", "Cập nhật phim");
             return "admin/movie-form";
-        } catch (MovieNotFoundException e) {
+        } catch (NotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/dashboard/management-movie";
         }
     }
 
     @PostMapping("/save")
-    public String saveMovie(Movie movie, @RequestParam("categories") List<Integer> categoryIds,
-                           RedirectAttributes ra, final BindingResult bindingResult){
+    public String saveMovie(Movie movie, @RequestParam("categories") List<Integer> categoryIds, RedirectAttributes ra) {
+        try {
+            // Tạo Set<Category> từ danh sách categoryIds
+            Set<Category> categories = new HashSet<>();
+            for (Integer categoryId : categoryIds) {
+                Category category = categoryService.getCategoryById(categoryId);
+                categories.add(category);
+            }
+            movie.setCategories(categories);
 
-        // Tạo Set<Category> từ danh sách categoryIds
-        Set<Category> categories = new HashSet<>();
-        for (Integer categoryId : categoryIds) {
-            Category category = categoryService.getCategoryById(categoryId);
-            categories.add(category);
+            movieService.save(movie);
+        } catch (NotFoundException | IllegalArgumentException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/movie/new";
         }
-        // Gán Set<Category> vào trường categories của đối tượng Movie
-        movie.setCategories(categories);
-
-        // Có lỗi validate data
-        if (bindingResult.hasErrors()) {
-            return "admin/movie-form";
-        }
-        movieService.save(movie);
         ra.addFlashAttribute("successMessage", "Lưu thông tin phim thành công.");
         return "redirect:/dashboard/management-movie";
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam("id") Integer movieId,
-                         RedirectAttributes ra){
+    public String delete(@RequestParam("id") Integer movieId, RedirectAttributes ra) {
         try {
             movieService.deleteById(movieId);
-            ra.addFlashAttribute("successMessage","Xóa phim có id = "+movieId+" thành công.");
-        } catch (MovieNotFoundException e) {
+            ra.addFlashAttribute("successMessage", "Xóa phim có id = " + movieId + " thành công.");
+        } catch (NotFoundException e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/dashboard/management-movie";

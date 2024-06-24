@@ -1,5 +1,6 @@
 package com.actvn.cinema.config;
 
+import com.actvn.cinema.exception.CustomAuthenticationFailureHandler;
 import com.actvn.cinema.service.impl.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -55,7 +56,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**","/manager/**").hasAnyRole("ADMIN")
                 .and()
                 .formLogin()
-                .loginPage("/login").permitAll()
+                .loginPage("/login")
+                .failureHandler(new CustomAuthenticationFailureHandler())
+                .permitAll()
                 .and()
                 .logout()
                 .invalidateHttpSession(true)

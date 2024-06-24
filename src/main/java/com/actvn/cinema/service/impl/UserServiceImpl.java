@@ -1,174 +1,167 @@
 package com.actvn.cinema.service.impl;
 
-import com.actvn.cinema.exception.UserNotFoundException;
-import com.actvn.cinema.model.Token;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.User;
-import com.actvn.cinema.repositories.TokenRepository;
 import com.actvn.cinema.repositories.UserRepository;
-import com.actvn.cinema.service.MailService;
 import com.actvn.cinema.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private TokenRepository tokenRepository;
-    @Autowired
-    private MailService mailService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Value("${site.base.url}")
-    private String BASE_URL;
+    private Validator validator;
 
     @Override
-    public String register(final User user, final BindingResult bindingResult) {
-        if (userNameExists(user.getUsername())) {
-            bindingResult.addError(new FieldError("user", "username", "Username đã tồn tại trong hệ thống. Vui lòng thử lại."));
-        }
-        if (userEmailExists(user.getEmail())) {
-            bindingResult.addError(new FieldError("user", "email", "Email đã tồn tại trong hệ thống. Vui lòng thử lại."));
-        }
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
-        addUser(user);
-        return "redirect:register?success";
-    }
-
-    public void addUser(final User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
-        userRepository.save(user);
-        sendToken(user);
-    }
-
-    private void sendToken(final User user) {
-        final String tokenValue = UUID.randomUUID().toString();
-        final Token token = new Token();
-        token.setValue(tokenValue);
-        token.setUser(user);
-        tokenRepository.save(token);
-
-        String subject = "[Cinema] Please verify your registration";
-        String content = "Dear [[name]],<br>"
-                + "Please click the link below to verify your registration:<br>"
-                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-                + "Thank you,<br>"
-                + "Actvn Cinema App.";
-
-        content = content.replace("[[name]]", user.getUsername());
-        String verifyURL = BASE_URL + "/verify?token=" + token.getValue();
-
-        content = content.replace("[[URL]]", verifyURL);
-
-        try {
-            mailService.sendMail(user.getEmail(), subject, content, true);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public String verifyEmail(String value) {
-        Token token = tokenRepository.findByValue(value);
-        if (Objects.isNull(token)) {
-            return "redirect:login?tokenError";
-        }
-        Optional<User> user = userRepository.findById(token.getUser().getId());
+    public User getUserByEmail(final String email) throws NotFoundException {
+        User user = userRepository.findByEmail(email);
         if (Objects.isNull(user)) {
-            return "redirect:login?tokenError";
+            log.warn("[LOG] User not found with email: {}", email);
+            throw new NotFoundException("User not found with email");
         }
-
-        User verifyUser = user.get();
-        verifyUser.setEnabled(true);
-        userRepository.save(verifyUser);
-
-        tokenRepository.delete(token);
-        return "redirect:login?tokenSuccess";
-    }
-
-    private boolean userEmailExists(final String email) {
-        return userRepository.findByEmail(email) != null;
-    }
-
-    private boolean userNameExists(final String username) {
-        return userRepository.findByUsername(username) != null;
+        return user;
     }
 
     @Override
-    public List<User> findUserByRole(String role){
-        return  userRepository.findUserByRole(role);
+    public User getUserByUsername(final String username) throws NotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (Objects.isNull(user)) {
+            log.warn("[LOG] User not found with username: {}", username);
+            throw new NotFoundException("User not found with username");
+        }
+        return user;
     }
 
     @Override
-    public List<User> findUserByUsernameOrEmail(String search, String role){
-        return userRepository.findByUsernameContainingOrEmailContainingAndRole(search, search, role);
+    public boolean userEmailExists(String email) {
+        return !Objects.isNull(userRepository.findByEmail(email));
     }
 
     @Override
-    public User get(Long id) throws UserNotFoundException {
+    public boolean userUsernameExists(String username) {
+        return !Objects.isNull(userRepository.findByUsername(username));
+    }
+
+    @Override
+    public List<User> findUserByRole(String role) throws NotFoundException {
+        List<User> userByRole = userRepository.findUserByRole(role);
+        if (userByRole.isEmpty()){
+            throw new NotFoundException("Không có Người dùng có vai trò: "+role);
+        }
+        return userByRole;
+    }
+
+    @Override
+    public List<User> findUserByUsernameOrEmail(String search, String role) {
+        return userRepository.findByUsernameOrEmailContainingAndRole(search, search, role);
+    }
+
+    @Override
+    public User get(Long id) throws NotFoundException {
         Optional<User> result = userRepository.findById(id);
         if (result.isPresent())
             return result.get();
-        else
-            throw new UserNotFoundException("Không tìm thấy user với id = " +id);
+        else {
+            log.warn("[LOG] Không tìm thấy user với id: {}", id);
+            throw new NotFoundException("Không tìm thấy user với id: " + id);
+        }
     }
 
     @Override
-    public void delete(Long id) throws UserNotFoundException {
+    public void delete(Long id) throws NotFoundException {
         Optional<User> result = userRepository.findById(id);
-        if (result.isPresent())
+        if (result.isPresent()) {
             userRepository.deleteById(id);
-        else
-            throw new UserNotFoundException("Không tìm thấy user với id = " +id);
-
+            log.info("[LOG] Xoá thành công user với id: {}", id);
+        } else {
+            log.warn("[LOG] Không tìm thấy user với id: {}", id);
+            throw new NotFoundException("Không tìm thấy user với id = " + id);
+        }
     }
 
     @Override
-    public void lock(Long id) throws UserNotFoundException {
+    public void lock(Long id) throws NotFoundException {
         Optional<User> result = userRepository.findById(id);
-        if (result.isPresent()){
+        if (result.isPresent()) {
             User user = result.get();
             user.setLocked(true);
+            log.info("[LOG] Khoá thành công user với id: {}", id);
             userRepository.save(user);
+        } else {
+            log.warn("[LOG] Không tìm thấy user với id: {}", id);
+            throw new NotFoundException("Không tìm thấy user với id = " + id);
         }
-        else
-            throw new UserNotFoundException("Không tìm thấy user với id = " +id);
-
     }
 
     @Override
-    public void unlock(Long id) throws UserNotFoundException {
+    public void unlock(Long id) throws NotFoundException {
         Optional<User> result = userRepository.findById(id);
-        if (result.isPresent()){
+        if (result.isPresent()) {
             User user = result.get();
             user.setLocked(false);
+            log.info("[LOG] Mở khoá thành công user với id: {}", id);
             userRepository.save(user);
+        } else {
+            log.warn("[LOG] Không tìm thấy user với id: {}", id);
+            throw new NotFoundException("Không tìm thấy user với id = " + id);
         }
-        else
-            throw new UserNotFoundException("Không tìm thấy user với id = " +id);
-
     }
 
     @Override
-    public void save(User user){
+    public void save(@Valid User user) throws IllegalArgumentException {
+        Errors errors = new BeanPropertyBindingResult(user, "user");
+
+        if (userEmailExists(user.getEmail())) {
+            errors.rejectValue("username", "username.exists", "Username đã tồn tại trong hệ thống. Vui lòng thử lại.");
+        }
+        if (userUsernameExists(user.getEmail())) {
+            errors.rejectValue("email", "email.exists", "Email đã tồn tại trong hệ thống. Vui lòng thử lại.");
+        }
+
+        validator.validate(user, errors);
+        if (errors.hasErrors()) {
+            String message = errors.getAllErrors().get(0).getDefaultMessage();
+            log.warn("[LOG] Validation errors: {}", message);
+            throw new IllegalArgumentException(message);
+        }
+        log.info("[LOG] Lưu người dùng với username {} thành công.", user.getUsername());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void update(@Valid User user) throws IllegalArgumentException, NotFoundException {
+        Errors errors = new BeanPropertyBindingResult(user, "user");
+
+        if (getUserByEmail(user.getEmail()).getId() != user.getId()) {
+            errors.rejectValue("username", "username.exists", "Username đã tồn tại trong hệ thống. Vui lòng thử lại.");
+        }
+        if (getUserByUsername(user.getUsername()).getId() != user.getId()) {
+            errors.rejectValue("email", "email.exists", "Email đã tồn tại trong hệ thống. Vui lòng thử lại.");
+        }
+
+        validator.validate(user, errors);
+        if (errors.hasErrors()) {
+            String message = errors.getAllErrors().get(0).getDefaultMessage();
+            log.warn("[LOG] Validation errors: {}", message);
+            throw new IllegalArgumentException(message);
+        }
+        log.info("[LOG] Cập nhật người dùng với username {} thành công.", user.getUsername());
         userRepository.save(user);
     }
 }

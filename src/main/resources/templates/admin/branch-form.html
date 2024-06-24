@@ -45,6 +45,15 @@
             </div>
             <!-- end main title -->
 
+            <!--message-->
+            <div class="col-12">
+                <div class="main__table-message">
+                    <div th:if="${successMessage}" class="text-center alert alert-success">[[${successMessage}]]</div>
+                    <div th:if="${errorMessage}" class="text-center alert alert-danger">[[${errorMessage}]]</div>
+                </div>
+            </div>
+            <!--message-->
+
             <!-- form -->
             <div class="col-12">
                 <form th:action="@{/branch/save}" th:method="POST" th:object="${branch}" class="form" id="branchForm">

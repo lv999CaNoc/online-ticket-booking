@@ -15,6 +15,22 @@
 	<link rel="stylesheet" href="/css/ionicons.min.css">
 	<link rel="stylesheet" href="/css/admin.css">
 
+	<style>
+		.text-center {
+			text-align: center;
+		}
+		.alert {
+			padding: 15px;
+			margin-bottom: 20px;
+			border: 1px solid transparent;
+			border-radius: 4px;
+		}
+		.alert-danger {
+			color: #721c24;
+			background-color: #f8d7da;
+			border-color: #f5c6cb;
+		}
+	</style>
 	<!-- Favicons -->
 	<link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
@@ -147,23 +163,24 @@
 				<div class="col-12 col-sm-6 col-lg-3">
 					<div class="stats">
 						<span>Phim đang chiếu</span>
-						<p>[[${listMovieNowShowing.size()}]]</p>
+						<p th:if="${listMovieNowShowing}">[[${listMovieNowShowing.size()}]]</p>
+						<p th:else>0</p>
 						<i class="icon ion-ios-film"></i>
 					</div>
 				</div>
 				<!-- end stats -->
 
-				
-
 				<!-- stats -->
 				<div class="col-12 col-sm-6 col-lg-3">
 					<div class="stats">
 						<span>User mới trong tháng</span>
-						<p th:text="${listUser.size()}"></p>
+						<p th:if="${listUser}" th:text="${listUser.size()}"></p>
+						<p th:else>0</p>
 						<i class="icon ion-ios-contacts"></i>
 					</div>
 				</div>
 				<!-- end stats -->
+
 				<!-- stats -->
 				<div class="col-12 col-sm-6 col-lg-3">
 					<div class="stats">
@@ -181,33 +198,34 @@
 
 							<div class="dashbox__wrap">
 								<a class="dashbox__refresh" href="#"><i class="icon ion-ios-refresh"></i></a>
-								<a class="dashbox__more" href="#">View All</a>
+								<a class="dashbox__more" href="/dashboard/management-movie">View All</a>
 							</div>
 						</div>
 
 						<div class="dashbox__table-wrap">
+							<div th:if="${top10MoviesEmpty}" class="text-center alert alert-danger">[[${top10MoviesEmpty}]]</div>
 							<table class="main__table main__table--dash">
 								<thead>
-									<tr>
-										<th>ID</th>
-										<th>TITLE</th>
-										<th>yêu thích</th>
-									</tr>
+								<tr>
+									<th>ID</th>
+									<th>TITLE</th>
+									<th>yêu thích</th>
+								</tr>
 								</thead>
-                                <tbody>
-                                <th:block th:each="movie: ${top10Movies}">
-                                    <tr>
-                                        <td>
-                                            <div class="main__table-text">[[${movie.id}]]</div>
-                                        </td>
-                                        <td>
-                                            <div class="main__table-text"><a href="#">[[${movie.title}]]</a></div>
-                                        </td>
-                                        <td>
-                                            <div class="main__table-text main__table-text--orange">[[${movie.likePercentage}]] %</div>
-                                        </td>
-                                    </tr>
-                                </th:block>
+								<tbody>
+								<th:block  th:each="movie: ${top10Movies}">
+									<tr>
+										<td>
+											<div class="main__table-text">[[${movie.id}]]</div>
+										</td>
+										<td>
+											<div class="main__table-text"><a href="#">[[${movie.title}]]</a></div>
+										</td>
+										<td>
+											<div class="main__table-text main__table-text--orange">[[${movie.likePercentage}]] %</div>
+										</td>
+									</tr>
+								</th:block>
 								</tbody>
 							</table>
 						</div>
@@ -223,37 +241,38 @@
 
 							<div class="dashbox__wrap">
 								<a class="dashbox__refresh" href="#"><i class="icon ion-ios-refresh"></i></a>
-								<a class="dashbox__more" href="/admin/management-movie">View All</a>
+								<a class="dashbox__more" href="/dashboard/management-movie">View All</a>
 							</div>
 						</div>
 
 						<div class="dashbox__table-wrap">
+							<div th:if="${listMovieNowShowingEmpty}" class="text-center alert alert-danger">[[${listMovieNowShowingEmpty}]]</div>
 							<table class="main__table main__table--dash">
 								<thead>
-									<tr>
-										<th>ID</th>
-										<th>TITLE</th>
-										<th>YÊU THÍCH</th>
-										<th>DOANH SỐ</th>
-									</tr>
+								<tr>
+									<th>ID</th>
+									<th>TITLE</th>
+									<th>YÊU THÍCH</th>
+									<th>DOANH SỐ</th>
+								</tr>
 								</thead>
 								<tbody>
-									<th:block th:each="movie: ${listMovieNowShowing}">
-                                        <tr>
-                                            <td>
-                                                <div class="main__table-text">[[${movie.id}]]</div>
-                                            </td>
-                                            <td>
-                                                <div class="main__table-text"><a href="#">[[${movie.title}]]</a></div>
-                                            </td>
-                                            <td>
-                                                <div class="main__table-text main__table-text--orange">[[${movie.likePercentage}]] %</div>
-                                            </td>
-                                            <td>
-                                                <div class="main__table-text main__table-text--orange">[[${movie.revenuePercentage}]] %</div>
-                                            </td>
-                                        </tr>
-                                    </th:block>
+								<th:block th:each="movie: ${listMovieNowShowing}">
+									<tr>
+										<td>
+											<div class="main__table-text">[[${movie.id}]]</div>
+										</td>
+										<td>
+											<div class="main__table-text"><a href="#">[[${movie.title}]]</a></div>
+										</td>
+										<td>
+											<div class="main__table-text main__table-text--orange">[[${movie.likePercentage}]] %</div>
+										</td>
+										<td>
+											<div class="main__table-text main__table-text--orange">[[${movie.revenuePercentage}]] %</div>
+										</td>
+									</tr>
+								</th:block>
 								</tbody>
 							</table>
 						</div>
@@ -269,40 +288,41 @@
 
 							<div class="dashbox__wrap">
 								<a class="dashbox__refresh" href="#"><i class="icon ion-ios-refresh"></i></a>
-								<a class="dashbox__more" href="#">View All</a>
+								<a class="dashbox__more" href="/dashboard/management-movie">View All</a>
 							</div>
 						</div>
 
 						<div class="dashbox__table-wrap">
+							<div th:if="${listMovieComingSoonEmpty}" class="text-center alert alert-danger">[[${listMovieComingSoonEmpty}]]</div>
 							<table class="main__table main__table--dash">
 								<thead>
-									<tr>
-										<th>ID</th>
-										<th>TITLE</th>
-										<th>RELEASE DATE</th>
-									</tr>
+								<tr>
+									<th>ID</th>
+									<th>TITLE</th>
+									<th>RELEASE DATE</th>
+								</tr>
 								</thead>
 								<tbody>
-                                <th:block th:each="movie: ${listMovieComingSoon}">
-                                    <tr>
-                                        <td>
-                                            <div class="main__table-text">[[${movie.id}]]</div>
-                                        </td>
-                                        <td>
-                                            <div class="main__table-text"><a href="#">[[${movie.title}]]</a></div>
-                                        </td>
-                                        <td>
-                                            <div class="main__table-text main__table-text--green">[[${movie.getFormattedReleaseDate()}]]</div>
-                                        </td>
-                                    </tr>
-                                </th:block>
+								<th:block th:each="movie: ${listMovieComingSoon}">
+									<tr>
+										<td>
+											<div class="main__table-text">[[${movie.id}]]</div>
+										</td>
+										<td>
+											<div class="main__table-text"><a href="#">[[${movie.title}]]</a></div>
+										</td>
+										<td>
+											<div class="main__table-text main__table-text--green">[[${movie.getFormattedReleaseDate()}]]</div>
+										</td>
+									</tr>
+								</th:block>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
-				<!-- end dashbox -->	
-				
+				<!-- end dashbox -->
+
 				<!-- dashbox -->
 				<div class="col-12 col-xl-6">
 					<div class="dashbox">
@@ -316,32 +336,33 @@
 						</div>
 
 						<div class="dashbox__table-wrap">
+							<div th:if="${listUser}" class="text-center alert alert-danger">[[${listUser}]]</div>
 							<table class="main__table main__table--dash">
 								<thead>
-									<tr>
-										<th>ID</th>
-										<th>FULL NAME</th>
-										<th>EMAIL</th>
-										<th>USERNAME</th>
-									</tr>
+								<tr>
+									<th>ID</th>
+									<th>FULL NAME</th>
+									<th>EMAIL</th>
+									<th>USERNAME</th>
+								</tr>
 								</thead>
 								<tbody>
-									<th:block th:each="user: ${listUser}">
-										<tr>
-											<td>
-												<div class="main__table-text" th:text="${user.id}"></div>
-											</td>
-											<td>
-												<div class="main__table-text"><a href="#" th:text="${user.firstName}"></a></div>
-											</td>
-											<td>
-												<div class="main__table-text" th:text="${user.email}"></div>
-											</td>
-											<td>
-												<div class="main__table-text" th:text="${user.username}"></div>
-											</td>
-										</tr>
-									</th:block>
+								<th:block th:each="user: ${listUser}">
+									<tr>
+										<td>
+											<div class="main__table-text" th:text="${user.id}"></div>
+										</td>
+										<td>
+											<div class="main__table-text"><a href="#" th:text="${user.firstName}"></a></div>
+										</td>
+										<td>
+											<div class="main__table-text" th:text="${user.email}"></div>
+										</td>
+										<td>
+											<div class="main__table-text" th:text="${user.username}"></div>
+										</td>
+									</tr>
+								</th:block>
 								</tbody>
 							</table>
 						</div>
@@ -352,7 +373,6 @@
 		</div>
 	</main>
 	<!-- end main content -->
-
 	<!-- JS -->
 	<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>

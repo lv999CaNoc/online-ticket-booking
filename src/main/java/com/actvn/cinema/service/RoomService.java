@@ -1,21 +1,23 @@
 package com.actvn.cinema.service;
 
-import com.actvn.cinema.exception.RoomNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.Room;
 
 import java.util.List;
 
 public interface RoomService {
 
-    List<Room> listAll();
+    List<Room> listAll() throws NotFoundException;
 
-    void save(Room room);
+    void save(Room room) throws IllegalArgumentException;
 
-    Room get(Integer id) throws RoomNotFoundException;
+    void update(Room room) throws IllegalArgumentException;
 
-    void delete(Integer id) throws RoomNotFoundException;
+    Room get(Integer id) throws NotFoundException;
 
-    List<Room> findRoomByNameContaining(String name) throws RoomNotFoundException;
+    void delete(Integer id) throws NotFoundException;
 
-    List<Room> getRoomByBranchId(Integer branchId);
+    List<Room> findRoomByNameContaining(String name) throws NotFoundException;
+
+    List<Room> getRoomByBranchId(Integer branchId) throws NotFoundException;
 }

@@ -1,30 +1,34 @@
 package com.actvn.cinema.service;
 
-import com.actvn.cinema.exception.UserNotFoundException;
+import com.actvn.cinema.exception.NotFoundException;
 import com.actvn.cinema.model.User;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
-import java.security.Principal;
+import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
 
-    String register(final User user, final BindingResult bindingResult);
+    User getUserByEmail(String email) throws NotFoundException;
 
-    String verifyEmail(String value);
+    User getUserByUsername(String username) throws NotFoundException;
 
-    List<User> findUserByRole(String role);
+    boolean userEmailExists(String email);
+
+    boolean userUsernameExists(String username);
+
+    List<User> findUserByRole(String role) throws NotFoundException;
 
     List<User> findUserByUsernameOrEmail(String search, String role);
 
-    User get(Long id) throws UserNotFoundException;
+    User get(Long id) throws NotFoundException;
 
-    void delete(Long id) throws UserNotFoundException;
+    void delete(Long id) throws NotFoundException;
 
-    void lock(Long id) throws UserNotFoundException;
+    void lock(Long id) throws NotFoundException;
 
-    void unlock(Long id) throws UserNotFoundException;
+    void unlock(Long id) throws NotFoundException;
 
-    void save(User user);
+    void save(User user) throws IllegalArgumentException;
+
+    void update(@Valid User user) throws IllegalArgumentException, NotFoundException;
 }

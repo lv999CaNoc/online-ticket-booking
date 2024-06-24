@@ -181,6 +181,7 @@
                 <!--            Phim đang chiếu-->
                 <div class="tab-item active">
                     <div class="owl-carousel owl-theme tab-slider">
+                        <div th:if="${listMovieNowShowingEmpty}" class="text-center alert alert-danger">[[${listMovieNowShowingEmpty}]]</div>
                         <div class="item" th:each="movie: ${listMovieNowShowing}">
                             <div class="movie-grid">
                                 <div class="movie-thumb c-thumb">
@@ -214,6 +215,7 @@
                 <!--                Phim sắp chiếu-->
                 <div class="tab-item" >
                     <div class="owl-carousel owl-theme tab-slider">
+                        <div th:if="${listMovieComingSoonEmpty}" class="text-center alert alert-danger">[[${listMovieComingSoonEmpty}]]</div>
                         <div class="item" th:each="movie: ${listMovieComingSoon}">
                             <div class="movie-grid">
                                 <div class="movie-thumb c-thumb">

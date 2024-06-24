@@ -41,7 +41,9 @@
                 <div class="main__title">
                     <h2>[[${pageTitle}]]</h2>
 
-                    <span class="main__title-stat">Tổng: [[${schedules.size()}]]</span>
+                    <span th:if="${schedules}" class="main__title-stat">Tổng: [[${schedules.size()}]]</span>
+                    <span th:else class="main__title-stat">Tổng: 0</span>
+
                     <a class="main__title-link" style="margin-left: auto;" href="/schedule/new">Thêm lịch chiếu</a>
                     <div class="main__title-wrap">
                         <!-- filter sort -->
@@ -101,6 +103,7 @@
                         </thead>
 
                         <tbody>
+                        <div th:if="${errorEmpty}" class="text-center alert alert-danger">[[${errorEmpty}]]</div>
                         <th:block th:each="schedule: ${schedules}">
                             <tr>
                                 <td>
@@ -147,7 +150,8 @@
             <!-- paginator -->
             <div class="col-12">
                 <div class="paginator-wrap">
-                    <span>[[${schedules.size()}]] from 10</span>
+                    <span th:if="${schedules}">[[${schedules.size()}]] from 20</span>
+                    <span th:else>0 from 20</span>
 
                     <ul class="paginator">
                         <li class="paginator__item paginator__item--prev">

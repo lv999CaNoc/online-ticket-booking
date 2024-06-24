@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
@@ -161,6 +161,7 @@
           <div class="widget-1-body">
             <h6 class="subtitle">Thể loại</h6>
             <div class="check-area">
+              <div th:if="${errorCategoryEmpty}" class="text-center alert alert-danger">[[${errorCategoryEmpty}]]</div>
               <th:block th:each="cate: ${listCategories}">
                 <div class="form-group">
                   <input type="checkbox" name="cate" th:id="${cate.id}" th:onchange="filter()">
@@ -201,6 +202,7 @@
           <div class="tab-area">
             <div class="tab-item">
               <div id="movie-conten-grid" class="row mb-10 justify-content-center">
+                <div th:if="${notFoundMovie}" class="text-center alert alert-success">[[${notFoundMovie}]]</div>
                 <th:block  th:each="movie: ${movies}">
                   <div class="col-sm-6 col-lg-4">
                     <div class="movie-grid">
@@ -384,7 +386,6 @@
     // Hiển thị danh sách trên client
     var contentMovieList = document.getElementById("content-movie-list");
     // var contentMovieGrid = document.getElementById("content-movie-grid");
-
 
     // Tạo đoạn mã HTML sẵn cho mỗi phần tử trong danh sách
     var htmlList = "";
