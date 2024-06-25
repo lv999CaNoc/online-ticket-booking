@@ -14,12 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -38,6 +34,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private UserService userService;
+    @Autowired
     private MailService mailService;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -55,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
     public User register(@Valid User user) throws IllegalArgumentException {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
-        userRepository.save(user);
+        userService.save(user);
         log.info("[LOG] Saving user: {}", user);
         sendToken(user);
         return user;
@@ -105,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("[LOG] Verifying email successfully: {}", user.get().getEmail());
         User verifyUser = user.get();
         verifyUser.setEnabled(true);
-        userRepository.save(verifyUser);
+        userService.save(verifyUser);
         tokenRepository.delete(token);
     }
 

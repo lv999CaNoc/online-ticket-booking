@@ -7,6 +7,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -36,10 +40,15 @@ public class Movie {
     @NotBlank(message = "Mô tả phim không được để trống.")
     private String description;
 
+    @Positive(message = "Độ dài phim phải lớn hơn 0")
     private Integer duration;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @Pattern(regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "Định dạng ngày phải là dd/MM/yyyy")
+    @NotNull(message = "Ngày phát hành không được để trống")
     private Date releaseDate;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @Pattern(regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "Định dạng ngày phải là dd/MM/yyyy")
+    @NotNull(message = "Ngày kết thúc không được để trống")
     private Date endDate;
     private String director;
     private String actors;

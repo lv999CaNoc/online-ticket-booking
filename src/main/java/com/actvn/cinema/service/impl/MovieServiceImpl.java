@@ -49,6 +49,14 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie save(@Valid Movie movie) throws IllegalArgumentException {
         Errors errors = new BeanPropertyBindingResult(movie, "movie");
+
+        Date now = new Date();
+        if (movie.getEndDate().before(now)) {
+            errors.rejectValue("endDate", "endDate.beforeNow", "Ngày kết thúc đã qua, vui lòng nhập lại.");
+        }
+        if (movie.getEndDate().before(movie.getReleaseDate())) {
+            errors.rejectValue("endDate", "endDate.bofereRD", "Ngày kết thúc trước ngày phát hành, vui lòng nhập lại.");
+        }
         validator.validate(movie, errors);
         if (errors.hasErrors()) {
             String message = errors.getAllErrors().get(0).getDefaultMessage();
